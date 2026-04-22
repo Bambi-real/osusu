@@ -121,6 +121,10 @@ export default function GroupDetailPage() {
             <span>{members.length} of {group.max_members} members</span>
             <span className="mx-2 text-gray-300">|</span>
             <span>Started {formatDate(group.start_date)}</span>
+            <span className="mx-2 text-gray-300">|</span>
+            <span>
+              Organiser: <span className="font-medium text-gray-900">{isOrganiser ? `${user.fullName} (You)` : organiser.full_name}</span>
+            </span>
           </div>
           <div className="mt-4 text-sm">
             {group.description ? (
