@@ -133,7 +133,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
               <button
                 key={c.id}
                 onClick={() => setSelectedCycleId(c.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCycleId === c.id ? 'bg-green-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCycleId === c.id ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
                 Cycle {c.cycle_number}
               </button>
@@ -141,7 +141,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
           </div>
         ) : (
           <select 
-            className="block w-full md:w-64 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md shadow-sm border"
+            className="block w-full md:w-64 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm border"
             value={selectedCycleId}
             onChange={(e) => setSelectedCycleId(e.target.value)}
           >
@@ -168,7 +168,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
                     strokeWidth="3"
                   />
                   <path
-                    className="text-green-500"
+                    className="text-indigo-500"
                     strokeDasharray={`${progressPercent}, 100`}
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
@@ -188,7 +188,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
                   <Badge status={cycleData.status} />
                 </div>
                 <div className="text-sm text-gray-500">
-                  <span className="font-semibold text-green-700">{formatCurrency(cycleData.total_collected)}</span> collected of <span className="font-medium text-gray-900">{formatCurrency(cycleData.total_expected)}</span>
+                  <span className="font-semibold text-indigo-700">{formatCurrency(cycleData.total_collected)}</span> collected of <span className="font-medium text-gray-900">{formatCurrency(cycleData.total_expected)}</span>
                 </div>
               </div>
             </div>
@@ -207,10 +207,10 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
               const hasPaid = !!contribution;
 
               return (
-                <li key={member.id} className={`px-6 py-4 flex items-center justify-between ${hasPaid ? 'bg-green-50' : 'bg-white'}`}>
+                <li key={member.id} className={`px-6 py-4 flex items-center justify-between ${hasPaid ? 'bg-emerald-50' : 'bg-white'}`}>
                   <div className="flex items-center">
                     {hasPaid ? (
-                      <svg className="h-6 w-6 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="h-6 w-6 text-emerald-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     ) : (
@@ -292,7 +292,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
                 name="note"
                 type="text"
                 placeholder="e.g. Cash, Bank Transfer..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
 

@@ -76,7 +76,7 @@ export default function DashboardPage() {
     <PageWrapper>
       <div className="mb-10 ">
         {/* Vibrant Welcome Banner */}
-        <div className="bg-gradient-to-r from-green-600 via-indigo-600 to-indigo-700 rounded-[32px] p-8 sm:p-12 shadow-indigo-500/20 shadow-2xl relative overflow-hidden group">
+        <div className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-indigo-700 rounded-[32px] p-8 sm:p-12 shadow-indigo-500/20 shadow-2xl relative overflow-hidden group">
           <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
           <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
           
@@ -126,7 +126,7 @@ export default function DashboardPage() {
              +1 this month
            </div>
          </div>
-         <div className="bg-white p-6 rounded-[24px] border border-slate-100 border-l-4 border-l-green-500 shadow-sm flex items-center justify-between hover:shadow-xl transition-all">
+         <div className="bg-white p-6 rounded-[24px] border border-slate-100 border-l-4 border-l-indigo-500 shadow-sm flex items-center justify-between hover:shadow-xl transition-all">
            <div className="flex items-center gap-5">
              <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500">
                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
                <p className="text-3xl font-black text-slate-800 tracking-tight">{activeGroups}</p>
              </div>
            </div>
-           <div className="text-sm font-medium text-green-500 bg-green-50 px-2 py-1 rounded">
+           <div className="text-sm font-medium text-indigo-500 bg-indigo-50 px-2 py-1 rounded">
              On track
            </div>
          </div>

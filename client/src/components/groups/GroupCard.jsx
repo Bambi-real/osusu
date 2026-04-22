@@ -5,7 +5,7 @@ import { formatCurrency } from '../../utils/helpers';
 export default function GroupCard({ group }) {
   // Determine top border color based on status
   let borderClass = 'border-t-4 border-gray-400';
-  if (group.status === 'active') borderClass = 'border-t-4 border-green-500';
+  if (group.status === 'active') borderClass = 'border-t-4 border-emerald-500';
   else if (group.status === 'completed') borderClass = 'border-t-4 border-blue-500';
 
   return (

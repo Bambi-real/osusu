@@ -1,9 +1,9 @@
 export default function Badge({ status }) {
   const colors = {
     FORMING: 'bg-gray-100 text-gray-800',
-    ACTIVE: 'bg-green-100 text-green-800',
-    PAID: 'bg-green-100 text-green-800',
-    PAID_OUT: 'bg-green-100 text-green-800',
+    ACTIVE: 'bg-emerald-100 text-emerald-800',
+    PAID: 'bg-emerald-100 text-emerald-800',
+    PAID_OUT: 'bg-emerald-100 text-emerald-800',
     COLLECTING: 'bg-amber-100 text-amber-800',
     PENDING: 'bg-gray-100 text-gray-800',
     UNPAID: 'bg-gray-100 text-gray-800',

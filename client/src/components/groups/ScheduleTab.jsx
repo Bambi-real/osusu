@@ -48,7 +48,7 @@ export default function ScheduleTab({ groupId }) {
               
               let rowClass = "hover:bg-gray-50 transition-colors";
               if (isCollecting) rowClass += " bg-amber-50/40";
-              if (isPaidOut) rowClass += " bg-green-50/40";
+              if (isPaidOut) rowClass += " bg-emerald-50/40";
               
               const initials = cycle.payoutUser?.full_name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '?';
 
@@ -56,7 +56,7 @@ export default function ScheduleTab({ groupId }) {
                 <tr key={cycle.id} className={rowClass}>
                   <td className="px-6 py-5 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold ${isCollecting ? 'bg-amber-100 text-amber-800' : isPaidOut ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
+                      <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold ${isCollecting ? 'bg-amber-100 text-amber-800' : isPaidOut ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}`}>
                         {cycle.cycle_number}
                       </div>
                       {isCollecting && <span className="ml-2 text-xs font-bold text-amber-600 uppercase tracking-wide">Current</span>}
@@ -79,7 +79,7 @@ export default function ScheduleTab({ groupId }) {
                     {formatCurrency(cycle.total_expected)}
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap text-sm">
-                    <span className={cycle.total_collected === cycle.total_expected ? "text-green-600 font-bold" : "text-gray-600 font-medium"}>
+                    <span className={cycle.total_collected === cycle.total_expected ? "text-emerald-600 font-bold" : "text-gray-600 font-medium"}>
                       {formatCurrency(cycle.total_collected)}
                     </span>
                     <span className="text-gray-400 text-xs ml-1">/ {formatCurrency(cycle.total_expected)}</span>

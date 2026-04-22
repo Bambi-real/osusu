@@ -70,7 +70,7 @@ export default function ProfilePage() {
           <div className="p-8 sm:p-10 flex flex-col md:flex-row gap-10">
             {/* Avatar Section */}
             <div className="flex flex-col items-center space-y-4 md:w-1/3 border-b md:border-b-0 md:border-r border-gray-100 pb-8 md:pb-0 md:pr-10">
-              <div className="w-32 h-32 bg-green-600 rounded-full flex items-center justify-center text-white text-5xl font-bold shadow-md border-4 border-green-50">
+              <div className="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center text-white text-5xl font-bold shadow-md border-4 border-indigo-50">
                 {getInitials(user.fullName)}
               </div>
               <div className="text-center">
@@ -97,7 +97,7 @@ export default function ProfilePage() {
                 
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                  <div className="flex rounded-md shadow-sm border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500">
+                  <div className="flex rounded-md shadow-sm border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
                     <span className="inline-flex items-center px-4 bg-gray-50 text-gray-500 text-sm font-medium border-r border-gray-300">
                       +220
                     </span>
@@ -113,7 +113,7 @@ export default function ProfilePage() {
                 </div>
                 
                 {profileMsg && (
-                  <div className={`text-sm font-medium p-3 rounded-lg border ${profileMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                  <div className={`text-sm font-medium p-3 rounded-lg border ${profileMsg.type === 'success' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
                     {profileMsg.text}
                   </div>
                 )}
@@ -146,7 +146,7 @@ export default function ProfilePage() {
               <p className="text-xs text-gray-500">Password must be at least 8 characters long.</p>
               
               {passwordMsg && (
-                <div className={`text-sm font-medium p-3 rounded-lg border ${passwordMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                <div className={`text-sm font-medium p-3 rounded-lg border ${passwordMsg.type === 'success' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
                   {passwordMsg.text}
                 </div>
               )}

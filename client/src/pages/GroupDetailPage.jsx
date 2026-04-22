@@ -106,7 +106,7 @@ export default function GroupDetailPage() {
               <div className="inline-flex items-center bg-gray-100 rounded-full px-4 py-1.5 border border-gray-200">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide mr-2">Invite Code</span>
                 <span className="text-sm font-mono font-bold text-gray-900">{group.invite_code}</span>
-                <button onClick={copyToClipboard} className="ml-2 text-gray-400 hover:text-green-600 focus:outline-none transition-colors" title="Copy code">
+                <button onClick={copyToClipboard} className="ml-2 text-gray-400 hover:text-indigo-600 focus:outline-none transition-colors" title="Copy code">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                 </button>
               </div>
@@ -134,7 +134,7 @@ export default function GroupDetailPage() {
         {/* Tabs Navigation */}
         <div className="border-t border-gray-200 px-4 sm:px-6 flex space-x-8 text-sm font-medium">
           <button 
-            className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'overview' ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'overview' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
             onClick={() => setActiveTab('overview')}
           >
             Overview
@@ -142,7 +142,7 @@ export default function GroupDetailPage() {
           
           {group.status !== 'FORMING' && (
             <button 
-              className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'contributions' ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'contributions' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('contributions')}
             >
               Contributions
@@ -151,7 +151,7 @@ export default function GroupDetailPage() {
 
           {group.status !== 'FORMING' && (
             <button 
-              className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'schedule' ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'schedule' ? 'border-indigo-600 text-indigo-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
               onClick={() => setActiveTab('schedule')}
             >
               Schedule
@@ -164,16 +164,16 @@ export default function GroupDetailPage() {
         <>
           {group.status === 'FORMING' && isOrganiser && (
             <div className="mb-8">
-              <div className="bg-green-50 rounded-xl p-6 border border-green-100 flex flex-col sm:flex-row items-center justify-between">
+              <div className="bg-indigo-50 rounded-xl p-6 border border-indigo-100 flex flex-col sm:flex-row items-center justify-between">
                 <div className="mb-4 sm:mb-0">
-                  <h3 className="text-lg font-bold text-green-900 mb-1">Ready to start the group?</h3>
-                  <p className="text-sm text-green-700">You have {members.length} of {group.max_members} members. Starting locks the list and creates the schedule.</p>
+                  <h3 className="text-lg font-bold text-indigo-900 mb-1">Ready to start the group?</h3>
+                  <p className="text-sm text-indigo-700">You have {members.length} of {group.max_members} members. Starting locks the list and creates the schedule.</p>
                   
                   <div className="mt-3 flex items-center">
-                    <div className="w-48 bg-green-200 rounded-full h-2.5 mr-3">
-                      <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${(members.length / group.max_members) * 100}%` }}></div>
+                    <div className="w-48 bg-indigo-200 rounded-full h-2.5 mr-3">
+                      <div className="bg-indigo-600 h-2.5 rounded-full" style={{ width: `${(members.length / group.max_members) * 100}%` }}></div>
                     </div>
-                    <span className="text-xs font-semibold text-green-800">{members.length}/{group.max_members} joined</span>
+                    <span className="text-xs font-semibold text-indigo-800">{members.length}/{group.max_members} joined</span>
                   </div>
                 </div>
                 
@@ -228,10 +228,10 @@ export default function GroupDetailPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <div className={`inline-flex h-8 w-8 rounded-full items-center justify-center text-sm font-bold ${isCurrentRecipient ? 'bg-green-600 text-white shadow-sm' : 'bg-gray-100 text-gray-500 border border-gray-200'}`}>
+                          <div className={`inline-flex h-8 w-8 rounded-full items-center justify-center text-sm font-bold ${isCurrentRecipient ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-500 border border-gray-200'}`}>
                             {member.payout_order}
                           </div>
-                          {isCurrentRecipient && <div className="text-xs text-green-600 mt-1 font-medium">Current</div>}
+                          {isCurrentRecipient && <div className="text-xs text-indigo-600 mt-1 font-medium">Current</div>}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
                           {formatDate(member.joined_at)}
