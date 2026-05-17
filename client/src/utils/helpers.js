@@ -2,7 +2,7 @@ export function formatCurrency(amount) {
   return `D ${Number(amount).toLocaleString('en-GM', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })} GMD`;
+  })}`;
 }
 
 export function formatDate(dateString) {
