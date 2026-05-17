@@ -13,12 +13,19 @@ exports.createContribution = async (req, res, next) => {
 
     const { data: group, error: groupFetchError } = await supabaseAdmin
       .from('groups')
-      .select('contribution_amount, organiser_id')
+      .select('contribution_amount, organiser_id, status')
       .eq('id', groupId)
       .single();
       
     if (groupFetchError || !group || Number(amount) !== group.contribution_amount) {
         return res.status(400).json({ success: false, error: { message: `Contribution amount must exactly match the group's designated amount.` } });
+    }
+
+    if (group.status === 'CANCELLED') {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'This group has been cancelled. No new contributions can be recorded.' },
+      });
     }
 
     if (group.organiser_id !== req.user.id) {

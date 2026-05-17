@@ -189,6 +189,10 @@ exports.joinGroup = async (req, res, next) => {
         return res.status(404).json({ success: false, error: { message: 'Invalid invite code' } });
     }
 
+    if (group.status === 'CANCELLED') {
+        return res.status(400).json({ success: false, error: { message: 'This group has been cancelled and is no longer accepting members.' } });
+    }
+
     if (group.status !== 'FORMING') {
         return res.status(400).json({ success: false, error: { message: 'This group has already started' } });
     }
@@ -234,10 +238,115 @@ exports.joinGroup = async (req, res, next) => {
   }
 };
 
+exports.deleteGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const group = req.group;
+
+    if (group.status !== 'FORMING') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: group.status === 'ACTIVE'
+            ? 'An active group cannot be deleted. You can archive it instead to preserve member records.'
+            : group.status === 'COMPLETED'
+            ? 'A completed group cannot be deleted. It contains financial records for your members.'
+            : 'This group cannot be deleted.',
+        },
+      });
+    }
+
+    const { error } = await supabaseAdmin
+      .from('groups')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Delete group error:', error);
+      return res.status(500).json({
+        success: false,
+        error: { message: 'Failed to delete group. Please try again.' },
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: null,
+      message: 'Group deleted successfully.',
+    });
+
+  } catch (err) {
+    console.error('deleteGroup exception:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: 'An unexpected error occurred.' },
+    });
+  }
+};
+
+exports.cancelGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const group = req.group;
+
+    if (group.status !== 'ACTIVE') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: group.status === 'FORMING'
+            ? 'This group has not started yet. You can delete it instead.'
+            : group.status === 'COMPLETED'
+            ? 'This group has already completed. No action needed.'
+            : group.status === 'CANCELLED'
+            ? 'This group is already cancelled.'
+            : 'This group cannot be cancelled.',
+        },
+      });
+    }
+
+    const { data: updatedGroup, error } = await supabaseAdmin
+      .from('groups')
+      .update({
+        status: 'CANCELLED',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Cancel group error:', error);
+      return res.status(500).json({
+        success: false,
+        error: { message: 'Failed to cancel group. Please try again.' },
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: updatedGroup,
+      message: 'Group has been cancelled. All contribution history has been preserved.',
+    });
+
+  } catch (err) {
+    console.error('cancelGroup exception:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: 'An unexpected error occurred.' },
+    });
+  }
+};
+
 exports.startGroup = async (req, res, next) => {
   try {
     const { id } = req.params;
     const group = req.group;
+
+    if (group.status === 'CANCELLED') {
+        return res.status(400).json({ success: false, error: { message: 'This group has been cancelled and cannot be restarted.' } });
+    }
 
     if (group.status !== 'FORMING') {
         return res.status(400).json({ success: false, error: { message: 'Group has already started' } });

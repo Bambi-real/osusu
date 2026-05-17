@@ -88,12 +88,19 @@ exports.completeCycle = async (req, res, next) => {
     // Verify organiser status. We can check via the group
     const { data: group, error: groupError } = await supabaseAdmin
       .from('groups')
-      .select('organiser_id')
+      .select('organiser_id, status')
       .eq('id', cycle.group_id)
       .single();
 
     if (groupError || !group) {
       return res.status(404).json({ success: false, error: { message: 'Group not found' } });
+    }
+
+    if (group.status === 'CANCELLED') {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'This group has been cancelled. No new contributions can be recorded.' },
+      });
     }
 
     if (group.organiser_id !== req.user.id) {
