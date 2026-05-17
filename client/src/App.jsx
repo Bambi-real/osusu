@@ -11,6 +11,7 @@ import GroupDetailPage from './pages/GroupDetailPage';
 import ProfilePage     from './pages/ProfilePage';
 import MyContributionsPage from './pages/MyContributionsPage';
 import Spinner         from './components/common/Spinner';
+import LoadingSpinner  from './components/common/LoadingSpinner';
 import NotFoundPage    from './pages/NotFoundPage';
 
 function ProtectedRoute({ children }) {
@@ -19,13 +20,20 @@ function ProtectedRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />;
 }
 
+function HomeRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner fullPage />;
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <LandingPage />;
+}
+
 export default function App() {
   return (
     <>
       <Toaster />
       <BrowserRouter>
         <Routes>
-          <Route path="/"          element={<LandingPage />} />
+          <Route path="/"          element={<HomeRoute />} />
           <Route path="/login"     element={<LoginPage />} />
           <Route path="/register"  element={<RegisterPage />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />

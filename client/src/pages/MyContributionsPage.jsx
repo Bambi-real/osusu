@@ -34,7 +34,7 @@ export default function MyContributionsPage() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Contributed</h2>
-          <p className="text-4xl font-extrabold text-indigo-600 mt-1">D {totalContributed.toLocaleString()}</p>
+          <p className="text-4xl font-extrabold text-green-600 mt-1">D {totalContributed.toLocaleString()}</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export default function MyContributionsPage() {
                   <tr key={c.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{c.group?.name || c.groups?.name || 'Unknown Group'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Cycle {c.cycle?.cycle_number || c.cycles?.cycle_number || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">D {Number(c.amount).toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">D {Number(c.amount).toLocaleString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {c.paid_at ? new Date(c.paid_at).toLocaleDateString() : '-'}
                     </td>

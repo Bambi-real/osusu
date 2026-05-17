@@ -1,35 +1,29 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   const year = new Date().getFullYear();
+
   return (
-    <footer className="bg-gray-900 text-gray-400 py-10 px-6 w-full mt-auto">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left mb-8">
-        
-        {/* Left: Logo + Tagline */}
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">O</div>
-            <span className="text-white text-xl font-bold tracking-tight">OsusuApp</span>
+    <footer className="bg-gray-900 w-full mt-auto py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center text-white font-bold text-sm">O</div>
+              <span className="text-white text-xl font-bold tracking-tight">OsusuApp</span>
+            </div>
+            <p className="text-gray-400 text-sm">Saving together, the smart way.</p>
           </div>
-          <p className="text-sm">Saving together, the smart way.</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
+            <Link to="/dashboard" className="text-gray-400 hover:text-green-400 transition-colors font-medium">Dashboard</Link>
+            <Link to="/groups/new" className="text-gray-400 hover:text-green-400 transition-colors font-medium">Create Group</Link>
+            <Link to="/contributions" className="text-gray-400 hover:text-green-400 transition-colors font-medium">My History</Link>
+          </div>
+          <div className="flex flex-col items-center md:items-end gap-1">
+            <p className="text-sm text-gray-400">Built for The Gambia 🇬🇲</p>
+            <p className="text-xs text-gray-500">© {year} OsusuApp</p>
+          </div>
         </div>
-
-        {/* Centre: Nav Links */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-sm font-medium">
-          <a href="/dashboard" className="hover:text-white transition-colors">Dashboard</a>
-          <a href="/groups/new" className="hover:text-white transition-colors">Create Group</a>
-          <a href="/profile" className="hover:text-white transition-colors">Profile</a>
-        </div>
-
-        {/* Right: Built for */}
-        <div className="text-sm">
-          <p>Built for The Gambia 🇬🇲</p>
-          <p className="hidden md:block mt-1">© {year}</p>
-        </div>
-      </div>
-
-      {/* Bottom strip */}
-      <div className="max-w-6xl mx-auto border-t border-gray-800 pt-6 text-center md:text-left text-xs text-gray-500">
-        © {year} OsusuApp. University of The Gambia — Final Year Project.
       </div>
     </footer>
   );

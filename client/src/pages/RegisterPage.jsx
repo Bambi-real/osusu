@@ -58,7 +58,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 my-8">
         <div className="mb-8 text-center">
           <div className="flex justify-center mb-6">
-             <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+             <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-2xl">O</span>
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function RegisterPage() {
           
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-            <div className="flex rounded-md shadow-sm border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+            <div className="flex rounded-md shadow-sm border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500">
               <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm font-medium border-r border-gray-300">
                 +220
               </span>
@@ -119,7 +119,7 @@ export default function RegisterPage() {
           
           {error && <div className="text-red-500 text-sm font-medium p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
           
-          <Button type="submit" loading={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg p-3 font-medium transition-colors border-none">
+          <Button type="submit" loading={loading} className="w-full">
             Register
           </Button>
         </form>

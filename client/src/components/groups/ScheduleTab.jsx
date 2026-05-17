@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
-import { formatCurrency, formatDate } from '../../utils/helpers';
+import { formatCurrency, formatDate, formatDateWithDay } from '../../utils/helpers';
 import Badge from '../common/Badge';
 import Spinner from '../common/Spinner';
 
@@ -29,6 +29,9 @@ export default function ScheduleTab({ groupId }) {
 
   return (
     <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="px-6 pt-4">
+        <p className="text-xs text-gray-400 italic mb-3">🎲 Payout order was randomly assigned when the group started.</p>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -63,11 +66,11 @@ export default function ScheduleTab({ groupId }) {
                     </div>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 font-medium">
-                    {formatDate(cycle.due_date)}
+                    {formatDateWithDay(cycle.due_date)}
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs mr-3">
+                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs mr-3">
                         {initials}
                       </div>
                       <div>

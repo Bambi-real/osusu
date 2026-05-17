@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 const Input = forwardRef(function Input({ label, name, type = 'text', placeholder, error, value, onChange, disabled, className = '', ...props }, ref) {
   return (
     <div className={`flex flex-col w-full relative group ${className}`}>
-      {label && <label htmlFor={name} className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-indigo-600 transition-colors">{label}</label>}
+      {label && <label htmlFor={name} className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-green-600 transition-colors">{label}</label>}
       <input
         ref={ref}
         id={name}
@@ -16,7 +16,7 @@ const Input = forwardRef(function Input({ label, name, type = 'text', placeholde
         className={`px-4 py-3 bg-white border-2 rounded-xl shadow-sm transition-all duration-300 outline-none
           ${error 
             ? 'border-rose-300 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20 text-rose-900 bg-rose-50 placeholder-rose-300' 
-            : 'border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 text-slate-800 placeholder-slate-400 hover:border-slate-300'
+            : 'border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/20 text-slate-800 placeholder-slate-400 hover:border-slate-300'
           } ${disabled ? 'opacity-60 cursor-not-allowed bg-slate-50 border-slate-200' : ''}`}
         {...props}
       />

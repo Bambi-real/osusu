@@ -40,7 +40,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <div className="mb-8 text-center">
           <div className="flex justify-center mb-6">
-             <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center">
+             <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-2xl">O</span>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function LoginPage() {
           
           {error && <div className="text-red-500 text-sm font-medium p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
           
-          <Button type="submit" loading={loading} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg p-3 font-medium transition-colors border-none">
+          <Button type="submit" loading={loading} className="w-full">
             Sign in
           </Button>
         </form>

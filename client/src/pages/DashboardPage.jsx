@@ -59,10 +59,10 @@ export default function DashboardPage() {
       <PageWrapper>
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
            <div className="relative w-16 h-16">
-             <div className="absolute inset-0 border-4 border-indigo-100 rounded-full animate-ping opacity-75"></div>
-             <div className="absolute inset-2 border-4 border-t-indigo-500 rounded-full animate-spin"></div>
+             <div className="absolute inset-0 border-4 border-green-100 rounded-full animate-ping opacity-75"></div>
+             <div className="absolute inset-2 border-4 border-t-green-500 rounded-full animate-spin"></div>
            </div>
-           <p className="text-indigo-600 font-bold tracking-widest uppercase text-xs animate-pulse">Loading Groups...</p>
+           <p className="text-green-600 font-bold tracking-widest uppercase text-xs animate-pulse">Loading Groups...</p>
         </div>
       </PageWrapper>
     );
@@ -77,7 +77,7 @@ export default function DashboardPage() {
   return (
     <PageWrapper>
       <div className="mb-10 ">
-        <div className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-indigo-700 rounded-[32px] p-8 sm:p-12 shadow-indigo-500/20 shadow-2xl relative overflow-hidden group">
+        <div className="bg-gradient-to-r from-green-600 via-green-600 to-green-700 rounded-[32px] p-8 sm:p-12 shadow-green-600/20 shadow-2xl relative overflow-hidden group">
           <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
           <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
           
@@ -90,13 +90,13 @@ export default function DashboardPage() {
               <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
                 Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">{user?.fullName?.split(' ')[0]}</span> 👋
               </h1>
-              <p className="text-indigo-100 text-lg max-w-xl leading-relaxed font-medium">
-                Here’s what’s happening with your osusu groups today. Keep growing your savings together!
+              <p className="text-green-100 text-lg max-w-xl leading-relaxed font-medium">
+                Here's what's happening with your osusu groups today. Keep growing your savings together!
               </p>
             </div>
             
             <div className="flex items-center gap-3 shrink-0">
-               <Button variant="secondary" onClick={() => setIsJoinModalOpen(true)} className="!bg-white/10 !border-white/20 !text-white hover:!bg-white/20 backdrop-blur-md">
+               <Button variant="secondary" onClick={() => setIsJoinModalOpen(true)} className="!bg-white/10 !border-white/20 !text-white hover:!bg-green-600/30! backdrop-blur-md">
                  <svg className="w-5 h-5 mr-2 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
                  Join
                </Button>
@@ -112,9 +112,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 " style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
-         <div className="bg-white p-6 rounded-[24px] border border-slate-100 border-l-4 border-l-blue-500 shadow-sm flex items-center justify-between hover:shadow-xl transition-all">
+         <div className="bg-white p-6 rounded-[24px] border border-slate-100 border-l-4 border-l-green-500 shadow-sm flex items-center justify-between hover:shadow-xl transition-all">
            <div className="flex items-center gap-5">
-             <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500">
+             <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-green-600">
                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
              </div>
              <div>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
              </div>
            </div>
          </div>
-         <div className="bg-white p-6 rounded-[24px] border border-slate-100 border-l-4 border-l-indigo-500 shadow-sm flex items-center justify-between hover:shadow-xl transition-all">
+         <div className="bg-white p-6 rounded-[24px] border border-slate-100 border-l-4 border-l-emerald-500 shadow-sm flex items-center justify-between hover:shadow-xl transition-all">
            <div className="flex items-center gap-5">
              <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500">
                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -203,11 +203,11 @@ export default function DashboardPage() {
           title="Join a Group"
         >
           <form onSubmit={handleJoinGroup} className="space-y-6">
-            <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex gap-4">
+            <div className="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4">
               <div className="bg-white w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm">
-                <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
               </div>
-              <p className="text-sm text-indigo-800 font-medium leading-relaxed">
+              <p className="text-sm text-green-800 font-medium leading-relaxed">
                 Enter the secret invite code provided by the group organiser to securely join their rotating savings cycle.
               </p>
             </div>

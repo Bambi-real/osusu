@@ -72,10 +72,10 @@ export default function CreateGroupPage() {
 
   if (inviteCode) {
     return (
-      <div className="fixed inset-0 z-50 bg-indigo-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-green-50 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full bg-white shadow-2xl rounded-2xl p-10 text-center animate-fade-in-up">
-          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-indigo-100 mb-8 border-4 border-white shadow-sm">
-            <svg className="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-100 mb-8 border-4 border-white shadow-sm">
+            <svg className="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
             </svg>
           </div>
@@ -85,12 +85,12 @@ export default function CreateGroupPage() {
           <div className="flex flex-col items-center justify-center mb-10 bg-gray-50 p-6 rounded-xl border border-gray-100">
             <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Invite Code</div>
             <div className="flex items-center space-x-4">
-              <code className="px-6 py-3 bg-white text-indigo-600 rounded-lg text-3xl font-bold border border-indigo-200 shadow-sm font-mono tracking-wider">
+              <code className="px-6 py-3 bg-white text-green-600 rounded-lg text-3xl font-bold border border-green-200 shadow-sm font-mono tracking-wider">
                 {inviteCode}
               </code>
               <button 
                 onClick={copyToClipboard}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg p-3 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-lg p-3 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
               >
                 {copied ? (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
@@ -99,10 +99,10 @@ export default function CreateGroupPage() {
                 )}
               </button>
             </div>
-            {copied && <p className="text-indigo-600 mt-2 text-sm font-medium">Copied to clipboard!</p>}
+            {copied && <p className="text-green-600 mt-2 text-sm font-medium">Copied to clipboard!</p>}
           </div>
           
-          <Button variant="primary" onClick={() => navigate(`/groups/${groupId}`)} className="w-full py-4 text-lg rounded-xl shadow-lg bg-indigo-600 hover:bg-indigo-700 border-none">
+          <Button variant="primary" onClick={() => navigate(`/groups/${groupId}`)} className="w-full py-4 text-lg rounded-xl shadow-lg bg-green-600 hover:bg-green-700 border-none">
             Go to Group Dashboard
           </Button>
         </div>
@@ -133,12 +133,12 @@ export default function CreateGroupPage() {
                 <div key={step} className="flex flex-col items-center relative z-10 w-full">
                   <div 
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-200 shadow-sm
-                      ${isActive ? 'bg-indigo-600 text-white ring-4 ring-indigo-100' : 
-                        isCompleted ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}
+                      ${isActive ? 'bg-green-600 text-white ring-4 ring-green-100' : 
+                        isCompleted ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}
                   >
                     {isCompleted ? <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> : stepNumber}
                   </div>
-                  <span className={`mt-3 text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-indigo-600' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>
+                  <span className={`mt-3 text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-green-600' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>
                     {step}
                   </span>
                 </div>
@@ -148,7 +148,7 @@ export default function CreateGroupPage() {
           <div className="relative mt-[-2.5rem] mb-[2.5rem] px-10">
             <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 transform -translate-y-1/2 rounded-full"></div>
             <div 
-              className="absolute top-1/2 left-0 h-1 bg-indigo-500 -z-10 transform -translate-y-1/2 transition-all duration-300 rounded-full" 
+              className="absolute top-1/2 left-0 h-1 bg-green-500 -z-10 transform -translate-y-1/2 transition-all duration-300 rounded-full" 
               style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
             ></div>
           </div>
@@ -178,7 +178,7 @@ export default function CreateGroupPage() {
                       value={formData.description}
                       onChange={handleChange}
                       placeholder="What is the purpose of this osusu?"
-                      className="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 transition-shadow min-h-[100px] resize-y"
+                      className="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 transition-shadow min-h-[100px] resize-y"
                     />
                   </div>
                 </div>
@@ -210,12 +210,19 @@ export default function CreateGroupPage() {
                       name="frequency" 
                       value={formData.frequency}
                       onChange={handleChange}
-                      className="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 transition-shadow"
+                      className="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 transition-shadow"
                       required
                     >
+                      <option value="DAILY">Daily</option>
                       <option value="WEEKLY">Weekly</option>
                       <option value="MONTHLY">Monthly</option>
                     </select>
+                    {formData.frequency === 'DAILY' && (
+                      <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                        Daily groups move fast. Make sure all members can contribute every day.
+                        <br />A group with {formData.maxMembers || 'N'} members will complete in {formData.maxMembers || 'N'} days.
+                      </div>
+                    )}
                   </div>
 
                   <Input 
@@ -263,11 +270,13 @@ export default function CreateGroupPage() {
                     </div>
                     <div>
                       <span className="block text-xs text-gray-500">Frequency</span>
-                      <span className="font-semibold text-gray-900">{formData.frequency}</span>
+                      <span className="font-semibold text-gray-900">
+                        {formData.frequency === 'DAILY' ? 'Daily' : formData.frequency === 'WEEKLY' ? 'Weekly' : formData.frequency}
+                      </span>
                     </div>
                     <div>
                       <span className="block text-xs text-gray-500">Contribution</span>
-                      <span className="font-semibold text-indigo-600 text-lg">D{formData.contributionAmount}</span>
+                      <span className="font-semibold text-green-600 text-lg">D{formData.contributionAmount}</span>
                     </div>
                     <div>
                       <span className="block text-xs text-gray-500">Max Members</span>
@@ -279,8 +288,11 @@ export default function CreateGroupPage() {
                     </div>
                     <div className="col-span-2">
                       <span className="block text-xs text-gray-500">Total Payout Per Turn</span>
-                      <span className="font-bold text-indigo-700 text-xl">D{(Number(formData.contributionAmount) * Number(formData.maxMembers)).toLocaleString()}</span>
+                      <span className="font-bold text-green-700 text-xl">D{(Number(formData.contributionAmount) * Number(formData.maxMembers)).toLocaleString()}</span>
                     </div>
+                  </div>
+                  <div className="mt-4 bg-gray-100 rounded-lg p-3 text-sm text-gray-600">
+                    When you start the group, each member will be randomly assigned a payout position. The draw is automatic and unbiased.
                   </div>
                 </div>
                 

@@ -2,8 +2,8 @@ export default function Button({ variant = 'primary', size = 'md', loading, disa
   const baseStyles = 'relative inline-flex items-center justify-center font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 overflow-hidden';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white focus:ring-indigo-500 shadow-indigo-500/40 shadow-lg border border-indigo-400/20',
-    secondary: 'bg-white text-gray-800 border-2 border-gray-100 hover:border-indigo-200 hover:bg-indigo-50 focus:ring-indigo-500 hover:text-indigo-700 shadow-sm',
+    primary: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500 shadow-green-600/30 shadow-lg',
+    secondary: 'bg-white text-gray-800 border-2 border-gray-200 hover:border-green-300 hover:bg-green-50 focus:ring-green-500 hover:text-green-700 shadow-sm',
     danger: 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white focus:ring-rose-500 shadow-rose-500/40 shadow-lg',
     ghost: 'bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-300 shadow-none',
   };
@@ -25,11 +25,6 @@ export default function Button({ variant = 'primary', size = 'md', loading, disa
       onClick={onClick}
       disabled={disabled || loading}
     >
-      {/* Glossy inner reflection for primary buttons */}
-      {(variant === 'primary' || variant === 'danger') && (
-        <div className="absolute inset-0 bg-white/20 w-full h-1/3 rounded-t-xl pointer-events-none opacity-50" />
-      )}
-      
       {loading ? (
         <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
