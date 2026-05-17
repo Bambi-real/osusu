@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
@@ -23,6 +23,10 @@ export default function CreateGroupPage() {
   const [inviteCode, setInviteCode] = useState(null);
   const [groupId, setGroupId] = useState(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Create Group — OsusuApp';
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -111,7 +115,7 @@ export default function CreateGroupPage() {
   }
 
   const today = new Date().toISOString().split('T')[0];
-  const steps = ['Basics', 'Rules', 'Schedule'];
+  const steps = ['Basics', 'Rules', 'Review'];
 
   return (
     <PageWrapper>
@@ -263,34 +267,34 @@ export default function CreateGroupPage() {
 
                 <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                   <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">Group Summary</h4>
-                  <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-3">
                     <div>
-                      <span className="block text-xs text-gray-500">Name</span>
-                      <span className="font-semibold text-gray-900">{formData.name}</span>
+                      <dt className="text-xs text-gray-400 uppercase tracking-wide">Group Name</dt>
+                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.name}</dd>
                     </div>
                     <div>
-                      <span className="block text-xs text-gray-500">Frequency</span>
-                      <span className="font-semibold text-gray-900">
+                      <dt className="text-xs text-gray-400 uppercase tracking-wide">Frequency</dt>
+                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">
                         {formData.frequency === 'DAILY' ? 'Daily' : formData.frequency === 'WEEKLY' ? 'Weekly' : formData.frequency}
-                      </span>
+                      </dd>
                     </div>
                     <div>
-                      <span className="block text-xs text-gray-500">Contribution</span>
-                      <span className="font-semibold text-green-600 text-lg">D{formData.contributionAmount}</span>
+                      <dt className="text-xs text-gray-400 uppercase tracking-wide">Contribution</dt>
+                      <dd className="text-sm font-semibold text-green-600 mt-0.5">D{formData.contributionAmount}</dd>
                     </div>
                     <div>
-                      <span className="block text-xs text-gray-500">Max Members</span>
-                      <span className="font-semibold text-gray-900">{formData.maxMembers}</span>
+                      <dt className="text-xs text-gray-400 uppercase tracking-wide">Max Members</dt>
+                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.maxMembers}</dd>
                     </div>
                     <div className="col-span-2">
-                      <span className="block text-xs text-gray-500">Start Date</span>
-                      <span className="font-semibold text-gray-900">{formData.startDate ? new Date(formData.startDate).toLocaleDateString() : 'Not set'}</span>
+                      <dt className="text-xs text-gray-400 uppercase tracking-wide">Start Date</dt>
+                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.startDate ? new Date(formData.startDate).toLocaleDateString() : 'Not set'}</dd>
                     </div>
                     <div className="col-span-2">
-                      <span className="block text-xs text-gray-500">Total Payout Per Turn</span>
-                      <span className="font-bold text-green-700 text-xl">D{(Number(formData.contributionAmount) * Number(formData.maxMembers)).toLocaleString()}</span>
+                      <dt className="text-xs text-gray-400 uppercase tracking-wide">Total Payout Per Turn</dt>
+                      <dd className="text-sm font-bold text-green-700 mt-0.5">D{(Number(formData.contributionAmount) * Number(formData.maxMembers)).toLocaleString()}</dd>
                     </div>
-                  </div>
+                  </dl>
                   <div className="mt-4 bg-gray-100 rounded-lg p-3 text-sm text-gray-600">
                     When you start the group, each member will be randomly assigned a payout position. The draw is automatic and unbiased.
                   </div>
