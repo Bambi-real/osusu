@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
-import { formatCurrency, formatDate, formatDateWithDay } from '../../utils/helpers';
+import { formatCurrency, formatDateWithDay } from '../../utils/helpers';
 import Badge from '../common/Badge';
 import Spinner from '../common/Spinner';
 
@@ -17,7 +17,7 @@ export default function ScheduleTab({ groupId }) {
     try {
       const res = await api.get(`/groups/${groupId}/schedule`);
       setCycles(res.data.data);
-    } catch (err) {
+    } catch {
       setError('Failed to load schedule.');
     } finally {
       setLoading(false);
@@ -88,7 +88,15 @@ export default function ScheduleTab({ groupId }) {
                     <span className="text-gray-400 text-xs ml-1">/ {formatCurrency(cycle.total_expected)}</span>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap">
-                    <Badge status={cycle.status} />
+                    <div className="flex items-center gap-2">
+                      {cycle.status === 'COLLECTING' && (
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                      )}
+                      <Badge status={cycle.status} />
+                    </div>
                   </td>
                 </tr>
               );

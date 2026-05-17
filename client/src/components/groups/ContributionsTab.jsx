@@ -7,7 +7,7 @@ import Modal from '../common/Modal';
 import EmptyState from "../common/EmptyState";
 import Spinner from "../common/Spinner";
 
-export default function ContributionsTab({ groupId, group, members, isOrganiser, currentCycle: initialCycle }) {
+export default function ContributionsTab({ groupId, group, members, isOrganiser }) {
   const [cycles, setCycles] = useState([]);
   const [selectedCycleId, setSelectedCycleId] = useState('');
   const [cycleData, setCycleData] = useState(null);
@@ -37,7 +37,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
         const active = res.data.data.find(c => c.status === 'COLLECTING') || res.data.data[0];
         setSelectedCycleId(active.id);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load cycles for dropdown.');
     } finally {
       setLoading(false);
@@ -126,15 +126,18 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser,
           )}
         </div>
         
-        {cycles.length <= 6 ? (
-          <div className="flex flex-wrap gap-2">
+        {cycles.length <= 8 ? (
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {cycles.map(c => (
               <button
                 key={c.id}
                 onClick={() => setSelectedCycleId(c.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCycleId === c.id ? 'bg-green-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCycleId === c.id ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
                 Cycle {c.cycle_number}
+                {c.status === 'COLLECTING' && (
+                  <span className="ml-1.5 w-1.5 h-1.5 bg-amber-400 rounded-full inline-block" />
+                )}
               </button>
             ))}
           </div>
