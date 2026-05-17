@@ -276,40 +276,43 @@ export default function GroupDetailPage() {
                   <p className="text-xs text-gray-400">Share the invite code to add members to this group.</p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {members.map((member) => {
                     const isCurrentRecipient = currentCycle?.payout_user_id === member.user.id;
                     const initials = member.user.fullName ? member.user.fullName.charAt(0).toUpperCase() : '?';
+                    const isYou = member.user.id === user?.id;
 
                     return (
                       <div
                         key={member.id}
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                        className={`flex items-center gap-3 p-4 rounded-xl border transition-colors ${
+                          isCurrentRecipient ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100 hover:bg-gray-100'
+                        }`}
                       >
-                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                          isCurrentRecipient ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                          isCurrentRecipient ? 'bg-amber-200 text-amber-800' : 'bg-green-100 text-green-700'
                         }`}>
                           {initials}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {member.user.fullName}
-                            {member.user.id === user?.id && (
-                              <span className="ml-1.5 text-xs text-green-600 font-medium">(You)</span>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-gray-900 truncate">
+                              {member.user.fullName}
+                            </p>
+                            {isYou && (
+                              <span className="text-xs text-green-600 font-medium flex-shrink-0">(You)</span>
                             )}
-                          </p>
+                          </div>
                           <p className="text-xs text-gray-400">
-                            {isCurrentRecipient ? 'Current payout recipient' : `Joined ${formatRelativeDate(member.joined_at)}`}
+                            {isCurrentRecipient ? '🏆 Receiving this cycle' : `Joined ${formatRelativeDate(member.joined_at)}`}
                           </p>
                         </div>
 
-                        <div className="text-right flex-shrink-0">
-                          <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
-                            isCurrentRecipient ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-600'
-                          }`}>
-                            {member.payout_order}
-                          </span>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                          isCurrentRecipient ? 'bg-amber-500 text-white' : 'bg-white border-2 border-gray-200 text-gray-600'
+                        }`}>
+                          {member.payout_order}
                         </div>
                       </div>
                     );
@@ -319,7 +322,7 @@ export default function GroupDetailPage() {
             </div>
 
             {/* Group Management */}
-            {isOrganiser && group.status !== 'CANCELLED' && (
+            {isOrganiser && (group.status === 'FORMING' || group.status === 'ACTIVE') && (
               <div className="pt-6 border-t border-gray-200">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Group Management</h3>
                 <div className="flex flex-col sm:flex-row gap-3">

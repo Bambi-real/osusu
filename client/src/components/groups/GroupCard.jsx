@@ -18,13 +18,24 @@ const topBorderColor = {
 export default function GroupCard({ group, isOrganiser }) {
   const borderClass = topBorderColor[group.status] || topBorderColor.FORMING;
 
-  const cardClassName = `group block bg-white ${borderClass} overflow-hidden shadow-sm rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 min-w-0 ${group.status === 'CANCELLED' ? 'opacity-50' : ''}`;
+  const isCancelled = group.status === 'CANCELLED';
+
+  const cardClassName = `group relative block bg-white ${borderClass} overflow-hidden shadow-sm rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 min-w-0 ${isCancelled ? 'opacity-60 border-t-gray-300' : ''}`;
 
   return (
     <Link
       to={`/groups/${group.id}`}
       className={cardClassName}
     >
+      {isCancelled && (
+        <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 opacity-[0.03]"
+               style={{
+                 backgroundImage: `repeating-linear-gradient(-45deg, #000 0px, #000 1px, transparent 1px, transparent 8px)`
+               }}
+          />
+        </div>
+      )}
       <div className="p-5 flex flex-col h-full justify-between gap-3">
         <div className="flex items-start justify-between gap-2">
           <Badge status={group.status} />

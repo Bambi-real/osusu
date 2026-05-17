@@ -72,7 +72,7 @@ export default function MyContributionsPage() {
   return (
     <PageWrapper>
       <div className="page-enter space-y-8">
-        <div>
+        <div className="pt-6">
           <h1 className="text-2xl font-bold text-gray-900">My Contribution History</h1>
         </div>
 

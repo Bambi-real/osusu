@@ -8,7 +8,7 @@ import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import Modal from '../components/common/Modal';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, formatRelativeDate } from '../utils/helpers';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -95,6 +95,7 @@ export default function DashboardPage() {
   const nextPayoutGroup = [...activeGroups]
     .filter(g => g.status === 'ACTIVE')
     .sort((a, b) => (a.payout_order || 999) - (b.payout_order || 999))[0] || null;
+  const nextPayoutDueDate = nextPayoutGroup?.next_due_date || null;
 
   const subtext = activeGroups.length === 0
     ? "You haven't joined any groups yet. Create one or join with an invite code."
@@ -133,7 +134,7 @@ export default function DashboardPage() {
                 Join
               </Button>
               <Link to="/groups/new">
-                <Button className="bg-white !text-gray-900 hover:bg-gray-100 shadow-xl border-none w-full sm:w-auto">
+                <Button variant="secondary" className="bg-white text-green-700 font-semibold hover:bg-green-50 px-5 py-2.5 rounded-full border border-white/30 w-full sm:w-auto">
                   + New Group
                 </Button>
               </Link>
@@ -171,9 +172,16 @@ export default function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis max-w-full" title={nextPayoutGroup?.name || ''}>
-              {nextPayoutGroup ? nextPayoutGroup.name : '—'}
-            </p>
+            <div>
+              <p className="text-xl font-bold text-gray-900 truncate" title={nextPayoutGroup?.name}>
+                {nextPayoutGroup?.name ?? '—'}
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {nextPayoutDueDate
+                  ? formatRelativeDate(nextPayoutDueDate)
+                  : 'No upcoming payout'}
+              </p>
+            </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Next Payout</p>
             <p className="text-xs text-gray-400 mt-0.5">
               {nextPayoutGroup ? `Draw #${nextPayoutGroup.payout_order}` : 'No upcoming'}
@@ -219,7 +227,7 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div className={`grid gap-4 ${activeGroups.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+            <div className={`grid gap-5 ${activeGroups.length === 1 ? 'grid-cols-1 max-w-sm' : activeGroups.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {activeGroups.map(group => (
                 <GroupCard
                   key={group.id}

@@ -2,6 +2,66 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 
+function HeroMockup() {
+  return (
+    <div className="relative">
+      <div className="absolute inset-0 translate-x-4 translate-y-4 bg-green-200 rounded-2xl" />
+      <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-80 border-t-4 border-t-green-500">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xs bg-green-100 text-green-700 rounded-full px-3 py-1 font-medium">
+            Active
+          </span>
+          <span className="text-xs bg-blue-100 text-blue-700 rounded-full px-3 py-1 font-medium">
+            Monthly
+          </span>
+        </div>
+
+        <h3 className="text-lg font-bold text-gray-900 mb-1">
+          Family Savings
+        </h3>
+        <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 mb-3">
+          <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+          Organiser
+        </span>
+
+        <div className="border-t border-gray-100 pt-4 flex justify-between items-end">
+          <div>
+            <p className="text-lg font-bold text-green-700">
+              D 500.00
+            </p>
+            <p className="text-xs text-gray-400">
+              per monthly cycle
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm font-semibold text-gray-900">
+              Draw #2
+            </p>
+            <p className="text-xs text-gray-400">of 6</p>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>Cycle progress</span>
+            <span>4 / 6 paid</span>
+          </div>
+          <div className="h-1.5 bg-gray-100 rounded-full">
+            <div className="h-full w-2/3 bg-green-500 rounded-full" />
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg px-3 py-2 border border-gray-100 flex items-center gap-2">
+        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        <span className="text-xs font-medium text-gray-700">
+          Karamo paid ✓
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -17,6 +77,39 @@ export default function LandingPage() {
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const features = [
+    {
+      title: 'Contribution Tracking',
+      description: 'Mark each member as paid per cycle. See at a glance who\'s up to date and who needs a reminder.',
+      path: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+    },
+    {
+      title: 'Auto Payout Schedule',
+      description: 'Start the group and the schedule is generated automatically — daily, weekly, or monthly cycles.',
+      path: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
+    },
+    {
+      title: 'Fair Random Draw',
+      description: 'Payout positions are randomly assigned when the group starts. No arguments, no favouritism.',
+      path: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+    },
+    {
+      title: 'Invite Code Joining',
+      description: 'Share a simple code with your group. Members join in seconds — no registration form needed to join.',
+      path: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1',
+    },
+    {
+      title: 'Works on Any Phone',
+      description: 'No app download required. Open it in any browser on any phone, tablet, or computer.',
+      path: 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z',
+    },
+    {
+      title: 'Secure & Private',
+      description: 'Your group\'s data is private. Only members can see contribution history and schedules.',
+      path: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -64,58 +157,75 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 relative bg-[radial-gradient(ellipse_at_top,_#dcfce7_0%,_transparent_60%)]">
-        <div className="max-w-3xl mx-auto text-center pt-20">
-          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-8">
-            🇬🇲 Built for The Gambia
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-green-50 rounded-bl-[80px]" />
+          <div className="absolute top-20 right-20 w-64 h-64 bg-green-100 rounded-full opacity-50 blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-48 h-48 bg-green-200 rounded-full opacity-30 blur-2xl" />
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+              <span>🇬🇲</span>
+              <span>Built for The Gambia</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              Your osusu group,{' '}
+              <span className="text-green-600">organised.</span>
+            </h1>
+
+            <p className="text-xl text-gray-500 leading-relaxed mb-8 max-w-lg">
+              Track contributions, automate payout schedules, and keep every member accountable — right from your phone. No more notebooks.
+            </p>
+
+            <div className="flex flex-wrap gap-4 mb-8">
+              <a href="/register"
+                 className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-green-200 hover:shadow-xl hover:shadow-green-200 transition-all duration-200 text-base">
+                Get Started — It's Free
+              </a>
+              <a href="#how-it-works"
+                 className="border-2 border-gray-200 hover:border-green-400 text-gray-700 font-semibold px-8 py-4 rounded-full transition-all duration-200 text-base">
+                See How It Works
+              </a>
+            </div>
+
+            <p className="text-sm text-gray-400">
+              Free to use · No app download needed · Works on any phone
+            </p>
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight">
-            Your osusu group,<br />
-            <span className="text-green-600">organised.</span>
-          </h1>
-          <p className="text-xl text-gray-500 max-w-xl mx-auto mt-4 leading-relaxed">
-            Track contributions, automate payout schedules, and keep every member accountable — right from your phone. No more notebooks.
-          </p>
-          <div className="mt-8 flex gap-4 justify-center flex-wrap">
-            <Link
-              to="/register"
-              className="bg-green-600 hover:bg-green-700 text-white rounded-full px-8 py-4 font-semibold shadow-lg hover:shadow-xl transition-all"
-            >
-              Get Started — It's Free
-            </Link>
-            <button
-              onClick={() => scrollTo('how-it-works')}
-              className="border-2 border-gray-300 hover:border-green-500 rounded-full px-8 py-4 font-semibold text-gray-700 transition-all"
-            >
-              See How It Works
-            </button>
+
+          <div className="hidden lg:flex items-center justify-center">
+            <HeroMockup />
           </div>
-          <p className="text-sm text-gray-400 mt-6">
-            Free to use · No app download needed · Works on any phone
-          </p>
         </div>
       </section>
 
       {/* Social Proof Bar */}
-      <section className="bg-gray-50 border-y border-gray-100 py-6">
-        <div className="max-w-4xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          <div>
-            <div className="text-2xl mb-1">💰</div>
-            <div className="font-semibold text-gray-900 text-sm">Savings Tracked</div>
-            <div className="text-sm text-gray-400">Growing daily</div>
-          </div>
-          <div>
-            <div className="text-2xl mb-1">👥</div>
-            <div className="font-semibold text-gray-900 text-sm">Made for Communities</div>
-            <div className="text-sm text-gray-400">Groups of 2–50</div>
-          </div>
-          <div>
-            <div className="text-2xl mb-1">📱</div>
-            <div className="font-semibold text-gray-900 text-sm">Works on Any Device</div>
-            <div className="text-sm text-gray-400">No app needed</div>
+      <div className="border-y border-gray-100 bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="grid grid-cols-3 gap-8 text-center">
+            {[
+              { value: '2–50', label: 'Members per group', sub: 'Flexible group sizes' },
+              { value: 'Daily', label: 'Fastest cycle', sub: 'Weekly & monthly too' },
+              { value: '100%', label: 'Free to use', sub: 'No hidden fees' },
+            ].map((stat, i) => (
+              <div key={i}>
+                <p className="text-2xl font-bold text-green-700">
+                  {stat.value}
+                </p>
+                <p className="text-sm font-semibold text-gray-700 mt-0.5">
+                  {stat.label}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {stat.sub}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
 
       {/* How It Works */}
       <section id="how-it-works" className="py-24 px-4">
@@ -126,40 +236,42 @@ export default function LandingPage() {
             <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">OsusuApp handles the admin so your group can focus on saving.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-            <div className="hidden md:block absolute top-12 left-[16.66%] right-[16.66%] h-0.5 border-t-2 border-dashed border-green-200" />
+          <div className="relative">
+            <div className="hidden md:block absolute top-8 left-1/4 right-1/4 h-0.5 border-t-2 border-dashed border-green-200 z-0" />
 
-            <div className="text-center relative">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </div>
+                <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 1</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Create Your Group</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  Set your contribution amount, frequency (daily, weekly, or monthly), and how many members you want. Share the invite code with your group.
+                </p>
               </div>
-              <span className="text-green-600 font-bold text-sm">Step 1</span>
-              <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Create Your Group</h3>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto">
-                Set your contribution amount, frequency (daily, weekly, or monthly), and how many members you want. Share the invite code with your group.
-              </p>
-            </div>
 
-            <div className="text-center relative">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </div>
+                <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 2</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Members Join</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  Every member joins using the invite code. Once everyone is in, start the group — payout positions are randomly and fairly assigned.
+                </p>
               </div>
-              <span className="text-blue-600 font-bold text-sm">Step 2</span>
-              <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Members Join</h3>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto">
-                Every member joins using the invite code. Once everyone is in, start the group — payout positions are randomly and fairly assigned.
-              </p>
-            </div>
 
-            <div className="text-center relative">
-              <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <svg className="w-7 h-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+                <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 3</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Track & Pay Out</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  The organiser records each contribution. The app tracks who has paid, who hasn't, and who receives the pot each cycle. Everyone stays accountable.
+                </p>
               </div>
-              <span className="text-amber-600 font-bold text-sm">Step 3</span>
-              <h3 className="text-xl font-bold text-gray-900 mt-2 mb-3">Track & Pay Out</h3>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto">
-                The organiser records each contribution. The app tracks who has paid, who hasn't, and who receives the pot each cycle. Everyone stays accountable.
-              </p>
             </div>
           </div>
         </div>
@@ -174,36 +286,17 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-              <div className="text-2xl mb-4">📊</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Contribution Tracking</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Mark each member as paid per cycle. See at a glance who's up to date and who needs a reminder.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-              <div className="text-2xl mb-4">📅</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Auto Payout Schedule</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Start the group and the schedule is generated automatically — daily, weekly, or monthly cycles.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-              <div className="text-2xl mb-4">🎲</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Fair Random Draw</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Payout positions are randomly assigned when the group starts. No arguments, no favouritism.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-              <div className="text-2xl mb-4">🔗</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Invite Code Joining</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Share a simple code with your group. Members join in seconds — no registration form needed to join.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-              <div className="text-2xl mb-4">📱</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Works on Any Phone</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">No app download required. Open it in any browser on any phone, tablet, or computer.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-              <div className="text-2xl mb-4">🔒</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Secure & Private</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">Your group's data is private. Only members can see contribution history and schedules.</p>
-            </div>
+            {features.map((feature, i) => (
+              <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
+                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={feature.path} />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

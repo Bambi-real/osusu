@@ -49,9 +49,13 @@ export default function ScheduleTab({ groupId }) {
               const isCollecting = cycle.status === 'COLLECTING';
               const isPaidOut = cycle.status === 'PAID_OUT';
               
-              let rowClass = "hover:bg-gray-50 transition-colors";
-              if (isCollecting) rowClass += " bg-amber-50/40";
-              if (isPaidOut) rowClass += " bg-emerald-50/40";
+              const isTodayCycle = new Date(cycle.due_date).toDateString() === new Date().toDateString();
+              
+              let rowClass = "border-b border-gray-100 transition-colors";
+              if (isTodayCycle) rowClass += " bg-blue-50";
+              else if (isCollecting) rowClass += " bg-amber-50";
+              else if (isPaidOut) rowClass += " bg-green-50";
+              else rowClass += " hover:bg-gray-50";
               
               const initials = cycle.payoutUser?.full_name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '?';
 
@@ -82,10 +86,12 @@ export default function ScheduleTab({ groupId }) {
                     {formatCurrency(cycle.total_expected)}
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap text-sm">
-                    <span className={cycle.total_collected === cycle.total_expected ? "text-emerald-600 font-bold" : "text-gray-600 font-medium"}>
+                    <p className={`text-sm font-semibold ${cycle.total_collected === cycle.total_expected ? 'text-green-700' : 'text-gray-900'}`}>
                       {formatCurrency(cycle.total_collected)}
-                    </span>
-                    <span className="text-gray-400 text-xs ml-1">/ {formatCurrency(cycle.total_expected)}</span>
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      of {formatCurrency(cycle.total_expected)}
+                    </p>
                   </td>
                   <td className="px-6 py-5 whitespace-nowrap">
                     <div className="flex items-center gap-2">

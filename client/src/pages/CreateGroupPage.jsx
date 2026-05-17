@@ -4,6 +4,13 @@ import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import { formatCurrency, formatDate } from '../utils/helpers';
+
+const frequencyLabel = {
+  DAILY: 'Daily',
+  WEEKLY: 'Weekly',
+  MONTHLY: 'Monthly',
+};
 
 export default function CreateGroupPage() {
   const navigate = useNavigate();
@@ -195,51 +202,61 @@ export default function CreateGroupPage() {
             {currentStep === 2 && (
               <form onSubmit={handleNext} className="space-y-6 animate-fade-in">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Rules & Contributions</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <Input 
-                    label="Contribution Amount (GMD)" 
-                    name="contributionAmount" 
-                    value={formData.contributionAmount}
-                    onChange={handleChange}
-                    type="number" 
-                    min="50"
-                    step="50"
-                    required 
-                    placeholder="1000"
-                  />
-                  
-                  <div className="flex flex-col">
-                    <label className="text-sm font-medium text-gray-700 mb-1">Frequency</label>
-                    <select 
-                      name="frequency" 
-                      value={formData.frequency}
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input 
+                      label="Contribution Amount (GMD)" 
+                      name="contributionAmount" 
+                      value={formData.contributionAmount}
                       onChange={handleChange}
-                      className="px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 transition-shadow"
-                      required
-                    >
-                      <option value="DAILY">Daily</option>
-                      <option value="WEEKLY">Weekly</option>
-                      <option value="MONTHLY">Monthly</option>
-                    </select>
-                    {formData.frequency === 'DAILY' && (
-                      <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-                        Daily groups move fast. Make sure all members can contribute every day.
-                        <br />A group with {formData.maxMembers || 'N'} members will complete in {formData.maxMembers || 'N'} days.
-                      </div>
-                    )}
+                      type="number" 
+                      min="50"
+                      step="50"
+                      required 
+                      placeholder="1000"
+                      className="w-full"
+                    />
+                    
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium text-gray-700 mb-1">Frequency *</label>
+                      <select 
+                        name="frequency" 
+                        value={formData.frequency}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900 transition-shadow"
+                        required
+                      >
+                        <option value="DAILY">Daily</option>
+                        <option value="WEEKLY">Weekly</option>
+                        <option value="MONTHLY">Monthly</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <Input 
-                    label="Max Members" 
-                    name="maxMembers" 
-                    value={formData.maxMembers}
-                    onChange={handleChange}
-                    type="number" 
-                    min="2" 
-                    max="50" 
-                    required 
-                    placeholder="10"
-                  />
+                  <div>
+                    <Input 
+                      label="Max Members *" 
+                      name="maxMembers" 
+                      value={formData.maxMembers}
+                      onChange={handleChange}
+                      type="number" 
+                      min="2" 
+                      max="50" 
+                      required 
+                      placeholder="10"
+                      className="w-full"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Including yourself. Min 2, max 50.
+                    </p>
+                  </div>
+
+                  {formData.frequency === 'DAILY' && (
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-start gap-2">
+                      <span className="flex-shrink-0">ℹ️</span>
+                      <span>Daily groups move fast. A group of {formData.maxMembers || 'N'} members completes in {formData.maxMembers || 'N'} days.</span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex justify-between pt-6 mt-6 border-t border-gray-100">
                   <Button type="button" variant="ghost" onClick={handlePrev} className="px-6 py-3 rounded-lg text-gray-600 hover:bg-gray-100">Back</Button>
@@ -275,28 +292,34 @@ export default function CreateGroupPage() {
                     <div>
                       <dt className="text-xs text-gray-400 uppercase tracking-wide">Frequency</dt>
                       <dd className="text-sm font-semibold text-gray-900 mt-0.5">
-                        {formData.frequency === 'DAILY' ? 'Daily' : formData.frequency === 'WEEKLY' ? 'Weekly' : formData.frequency}
+                        {frequencyLabel[formData.frequency] || formData.frequency}
                       </dd>
                     </div>
                     <div>
                       <dt className="text-xs text-gray-400 uppercase tracking-wide">Contribution</dt>
-                      <dd className="text-sm font-semibold text-green-600 mt-0.5">D{formData.contributionAmount}</dd>
+                      <dd className="text-sm font-semibold text-green-600 mt-0.5">{formatCurrency(formData.contributionAmount)}</dd>
                     </div>
                     <div>
                       <dt className="text-xs text-gray-400 uppercase tracking-wide">Max Members</dt>
-                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.maxMembers}</dd>
+                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.maxMembers} members</dd>
                     </div>
                     <div className="col-span-2">
                       <dt className="text-xs text-gray-400 uppercase tracking-wide">Start Date</dt>
-                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.startDate ? new Date(formData.startDate).toLocaleDateString() : 'Not set'}</dd>
+                      <dd className="text-sm font-semibold text-gray-900 mt-0.5">{formData.startDate ? formatDate(formData.startDate) : 'Not set'}</dd>
                     </div>
                     <div className="col-span-2">
                       <dt className="text-xs text-gray-400 uppercase tracking-wide">Total Payout Per Turn</dt>
-                      <dd className="text-sm font-bold text-green-700 mt-0.5">D{(Number(formData.contributionAmount) * Number(formData.maxMembers)).toLocaleString()}</dd>
+                      <dd className="text-sm font-bold text-green-700 mt-0.5">{formatCurrency(Number(formData.contributionAmount) * Number(formData.maxMembers))}</dd>
                     </div>
                   </dl>
-                  <div className="mt-4 bg-gray-100 rounded-lg p-3 text-sm text-gray-600">
-                    When you start the group, each member will be randomly assigned a payout position. The draw is automatic and unbiased.
+                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3">
+                    <span className="text-lg flex-shrink-0">🎲</span>
+                    <div>
+                      <p className="text-sm font-semibold text-green-800">Fair Random Draw</p>
+                      <p className="text-sm text-green-700 mt-0.5">
+                        When you start the group, each member will be randomly assigned a payout position. The draw is automatic and unbiased.
+                      </p>
+                    </div>
                   </div>
                 </div>
                 
