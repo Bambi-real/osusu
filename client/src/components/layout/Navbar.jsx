@@ -63,10 +63,10 @@ export default function Navbar() {
                       <Link
                         key={link.name}
                         to={link.path}
-                        className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                        className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                           active
-                            ? 'bg-green-50 text-green-700'
-                            : 'text-slate-600 hover:text-green-600 hover:bg-green-50/60'
+                            ? 'text-green-700 bg-green-50 font-semibold'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium'
                         }`}
                       >
                         {link.name}
@@ -175,10 +175,10 @@ export default function Navbar() {
                     key={link.name}
                     to={link.path}
                     onClick={() => setMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-all ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all ${
                       active
-                        ? 'bg-green-50 text-green-700'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-green-600'
+                        ? 'text-green-700 bg-green-50 font-semibold'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium'
                     }`}
                   >
                     {link.icon && (
