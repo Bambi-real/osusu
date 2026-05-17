@@ -1,5 +1,6 @@
 const supabaseAdmin = require('../lib/supabase');
 const { generatePayoutSchedule } = require('../utils/generatePayoutSchedule');
+const { shuffle } = require('../utils/shuffle');
 
 exports.createGroup = async (req, res, next) => {
   try {
@@ -236,47 +237,89 @@ exports.joinGroup = async (req, res, next) => {
 exports.startGroup = async (req, res, next) => {
   try {
     const { id } = req.params;
-    // req.group is already set by requireOrganiser middleware
     const group = req.group;
 
     if (group.status !== 'FORMING') {
         return res.status(400).json({ success: false, error: { message: 'Group has already started' } });
     }
 
-    // Clamp start_date to now if it's in the past
     if (new Date(group.start_date) < new Date()) {
        group.start_date = new Date();
     }
 
-    // Fetch members
+    // Fetch members (sorted by join order via payout_order)
     const { data: members, error: membersError } = await supabaseAdmin
       .from('group_members')
       .select('*')
-      .eq('group_id', id);
+      .eq('group_id', id)
+      .order('payout_order', { ascending: true });
 
     if (membersError || members.length < 2) {
       return res.status(400).json({ success: false, error: { message: 'A group requires at least 2 members to start' } });
     }
 
-    // Generate schedule
-    const cycles = generatePayoutSchedule(group, members);
+    // Save original payout_orders for possible rollback
+    const originalOrders = members.map(m => ({ id: m.id, payout_order: m.payout_order }));
+
+    // Helper to batch-update payout_order for all members.
+    // Returns true on success, false if any update failed.
+    async function updatePayoutOrders(orderList) {
+      const results = await Promise.all(
+        orderList.map(m =>
+          supabaseAdmin
+            .from('group_members')
+            .update({ payout_order: m.payout_order })
+            .eq('id', m.id)
+        )
+      );
+      return !results.some(r => r.error);
+    }
+
+    // Fisher-Yates shuffle for unbiased random payout order
+    const shuffled = shuffle([...members]);
+
+    // Reassign payout_order based on shuffled position
+    const membersWithNewOrder = shuffled.map((member, index) => ({
+      ...member,
+      payout_order: index + 1,
+    }));
+
+    // Update each member's payout_order in the database
+    if (!(await updatePayoutOrders(membersWithNewOrder))) {
+      return res.status(500).json({ success: false, error: { message: 'Failed to assign payout order' } });
+    }
+
+    // Generate schedule using the shuffled order
+    const cycles = generatePayoutSchedule(group, membersWithNewOrder);
 
     // Insert cycles
     const { error: cyclesError } = await supabaseAdmin
       .from('cycles')
       .insert(cycles);
 
+    // Compensating rollback: if cycle insertion fails, restore original payout_orders
     if (cyclesError) {
-         return res.status(500).json({ success: false, error: { message: 'Failed to generate cycles' } });
+      await updatePayoutOrders(originalOrders);
+      return res.status(500).json({ success: false, error: { message: 'Failed to generate cycles' } });
     }
 
     // Update group status
-    const { data: updatedGroup, error: updateError } = await supabaseAdmin
+    const { data: updatedGroup, error: statusError } = await supabaseAdmin
       .from('groups')
       .update({ status: 'ACTIVE', updated_at: new Date() })
       .eq('id', id)
       .select()
       .single();
+
+    if (statusError) {
+      // Rollback: restore original payout_orders and delete inserted cycles
+      await updatePayoutOrders(originalOrders);
+      await supabaseAdmin
+        .from('cycles')
+        .delete()
+        .eq('group_id', id);
+      return res.status(500).json({ success: false, error: { message: 'Failed to update group status' } });
+    }
 
     res.status(200).json({ success: true, data: updatedGroup });
 
