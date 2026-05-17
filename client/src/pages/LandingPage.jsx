@@ -6,6 +6,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    document.title = 'OsusuApp — Rotating Savings for The Gambia';
     const handleScroll = () => {
       setScrolled(window.scrollY > 60);
     };

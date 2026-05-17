@@ -1,8 +1,13 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function NotFoundPage() {
   const { user } = useAuth();
+
+  useEffect(() => {
+    document.title = 'Page Not Found — OsusuApp';
+  }, []);
   
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
