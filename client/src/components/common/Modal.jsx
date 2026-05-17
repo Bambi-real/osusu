@@ -1,12 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function Modal({ isOpen, onClose, title, children }) {
-  const [render, setRender] = useState(isOpen);
-
-  useEffect(() => {
-    if (isOpen) setRender(true);
-  }, [isOpen]);
-
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();
@@ -21,39 +15,34 @@ export default function Modal({ isOpen, onClose, title, children }) {
     };
   }, [isOpen, onClose]);
 
-  const onAnimationEnd = () => {
-    if (!isOpen) setRender(false);
-  };
-
-  if (!render) return null;
+  if (!isOpen) return null;
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 overflow-y-auto flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
-      onTransitionEnd={onAnimationEnd}
-    >
-      <div 
-        className={`fixed inset-0 backdrop-blur-md bg-slate-900/40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`} 
+    <div className="fixed inset-0 z-50 flex sm:items-center sm:justify-center">
+      <div
+        className="fixed inset-0 backdrop-blur-md bg-slate-900/40"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      <div className={`relative inline-block w-full max-w-lg p-6 sm:p-8 overflow-hidden text-left align-middle bg-white shadow-2xl rounded-3xl transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0 opacity-100' : 'scale-95 translate-y-8 opacity-0'}`}>
+      <div className="bg-white w-full sm:max-w-md sm:mx-4 sm:rounded-2xl rounded-t-2xl px-6 pt-6 pb-8 sm:pb-6 shadow-xl fixed inset-x-0 bottom-0 sm:relative sm:inset-auto">
+        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 sm:hidden" />
+
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-extrabold text-slate-800 tracking-tight">
+          <h3 className="text-lg font-semibold text-gray-900">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-slate-400 bg-slate-50 hover:bg-slate-100 hover:text-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-colors"
+            className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
           >
             <span className="sr-only">Close</span>
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <div className=" delay-150">
+        <div>
            {children}
         </div>
       </div>
