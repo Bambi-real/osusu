@@ -10,19 +10,22 @@ export default function ScheduleTab({ groupId }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchSchedule();
-  }, [groupId]);
+    let cancelled = false;
 
-  const fetchSchedule = async () => {
-    try {
-      const res = await api.get(`/groups/${groupId}/schedule`);
-      setCycles(res.data.data);
-    } catch {
-      setError('Failed to load schedule.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const loadData = async () => {
+      try {
+        const res = await api.get(`/groups/${groupId}/schedule`);
+        if (!cancelled) setCycles(res.data.data);
+      } catch {
+        if (!cancelled) setError('Failed to load schedule.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadData();
+    return () => { cancelled = true; };
+  }, [groupId]);
 
   if (loading) return <Spinner />;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;

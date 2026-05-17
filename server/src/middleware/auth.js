@@ -1,4 +1,4 @@
-const supabaseAdmin = require('../lib/supabase');
+const { supabaseAdmin } = require('../lib/supabase');
 
 async function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;

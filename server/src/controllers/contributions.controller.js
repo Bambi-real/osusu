@@ -1,4 +1,4 @@
-const supabaseAdmin = require('../lib/supabase');
+const { supabaseAdmin } = require('../lib/supabase');
 
 exports.createContribution = async (req, res, next) => {
   try {
@@ -73,12 +73,14 @@ exports.createContribution = async (req, res, next) => {
       return res.status(500).json({ success: false, error: { message: 'Failed to record contribution' } });
     }
 
-    // Update cycle total
-    const newTotal = (cycle.total_collected || 0) + Number(amount);
-    await supabaseAdmin
-      .from('cycles')
-      .update({ total_collected: newTotal })
-      .eq('id', cycleId);
+    // Atomically increment cycle total (prevents race conditions)
+    const { error: rpcError } = await supabaseAdmin.rpc(
+      'increment_total_collected',
+      { cycle_id: cycleId, amount_to_add: Number(amount) }
+    );
+    if (rpcError) {
+      console.error('[INFO] Failed to increment total_collected:', rpcError);
+    }
 
     res.status(201).json({ success: true, data: contribution });
   } catch (error) {
@@ -180,19 +182,13 @@ exports.deleteContribution = async (req, res, next) => {
       return res.status(500).json({ success: false, error: { message: 'Failed to delete contribution' } });
     }
 
-    // Subtract from cycle total
-    const { data: cycle } = await supabaseAdmin
-      .from('cycles')
-      .select('total_collected')
-      .eq('id', contribution.cycle_id)
-      .single();
-
-    if (cycle) {
-      const newTotal = Math.max(0, (cycle.total_collected || 0) - Number(contribution.amount));
-      await supabaseAdmin
-        .from('cycles')
-        .update({ total_collected: newTotal })
-        .eq('id', contribution.cycle_id);
+    // Atomically decrement cycle total (prevents race conditions)
+    const { error: rpcError } = await supabaseAdmin.rpc(
+      'decrement_total_collected',
+      { cycle_id: contribution.cycle_id, amount_to_remove: Number(contribution.amount) }
+    );
+    if (rpcError) {
+      console.error('[INFO] Failed to decrement total_collected:', rpcError);
     }
 
     res.status(200).json({ success: true, data: { message: 'Contribution deleted' } });

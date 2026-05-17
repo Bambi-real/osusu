@@ -24,8 +24,28 @@ export default function DashboardPage() {
   const [joinError, setJoinError] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
     document.title = 'Dashboard — OsusuApp';
-    fetchData();
+
+    const loadData = async () => {
+      try {
+        const [groupsRes, contribsRes] = await Promise.all([
+          api.get('/groups/my'),
+          api.get('/contributions/my'),
+        ]);
+        if (!cancelled) {
+          setGroups(groupsRes.data.data);
+          setContributions(contribsRes.data.data || []);
+        }
+      } catch {
+        if (!cancelled) setError('Failed to load data.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadData();
+    return () => { cancelled = true; };
   }, []);
 
   const fetchData = async () => {
@@ -48,7 +68,7 @@ export default function DashboardPage() {
     setJoinLoading(true);
     setJoinError(null);
     try {
-      await api.post('/groups/join', { inviteCode });
+      await api.post('/groups/join', { inviteCode: inviteCode.trim() });
       setIsJoinModalOpen(false);
       setInviteCode('');
       setLoading(true);
@@ -292,7 +312,7 @@ export default function DashboardPage() {
                 name="inviteCode"
                 label="Invite Code"
                 value={inviteCode}
-                onChange={(e) => setInviteCode(e.target.value)}
+                onChange={(e) => setInviteCode(e.target.value.trim())}
                 placeholder="e.g. 123e4567-e89b..."
                 required
               />

@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const [passwordMsg, setPasswordMsg] = useState(null);
 
   useEffect(() => {
-    document.title = 'Profile — OsusuApp';
+    document.title = 'Account Settings — OsusuApp';
   }, []);
 
   useEffect(() => {

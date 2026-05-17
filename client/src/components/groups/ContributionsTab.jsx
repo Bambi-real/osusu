@@ -48,13 +48,21 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
   const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
-    fetchCycles();
+    let cancelled = false;
+    fetchCycles().then(() => {
+      if (cancelled) return;
+    });
+    return () => { cancelled = true; };
   }, [groupId]);
 
   useEffect(() => {
+    let cancelled = false;
     if (selectedCycleId) {
-      fetchCycleDetail(selectedCycleId);
+      fetchCycleDetail(selectedCycleId).then(() => {
+        if (cancelled) return;
+      });
     }
+    return () => { cancelled = true; };
   }, [selectedCycleId]);
 
   const fetchCycles = async () => {

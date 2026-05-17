@@ -1,4 +1,4 @@
-const supabaseAdmin = require('../lib/supabase');
+const { supabaseAdmin } = require('../lib/supabase');
 
 async function requireOrganiser(req, res, next) {
   const groupId = req.params.groupId || req.params.id || req.body.groupId;

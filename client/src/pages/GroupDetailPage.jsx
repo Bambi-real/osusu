@@ -54,7 +54,11 @@ export default function GroupDetailPage() {
   };
 
   useEffect(() => {
-    fetchGroupData();
+    let cancelled = false;
+    fetchGroupData().then(() => {
+      if (cancelled) return;
+    });
+    return () => { cancelled = true; };
   }, [id]);
 
   const handleStartGroup = async () => {
@@ -101,14 +105,30 @@ export default function GroupDetailPage() {
     }
   };
 
-  const handleCopyCode = async () => {
+  const copyToClipboard = async (text) => {
     try {
-      await navigator.clipboard.writeText(data.group.invite_code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(text);
     } catch {
-      alert(`Invite code is: ${data.group.invite_code}`);
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      try {
+        document.execCommand('copy');
+      } catch (execErr) {
+        console.error('[INFO] Copy fallback failed:', execErr);
+      }
+      document.body.removeChild(el);
     }
+  };
+
+  const handleCopyCode = async () => {
+    await copyToClipboard(data.group.invite_code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (loading) {

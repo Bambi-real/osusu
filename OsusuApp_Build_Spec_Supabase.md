@@ -200,7 +200,8 @@ create table public.cycles (
   total_expected   float not null,
   total_collected  float not null default 0,
   status           cycle_status not null default 'PENDING',
-  created_at       timestamptz default now()
+  created_at       timestamptz default now(),
+  updated_at       timestamptz default now()
 );
 
 -- contributions
@@ -212,9 +213,14 @@ create table public.contributions (
   amount    float not null,
   paid_at   timestamptz default now(),
   note      text,
+  updated_at timestamptz default now(),
   unique(user_id, cycle_id)  -- one contribution per member per cycle
 );
 ```
+
+> **Schema files** in `server/sql/`:
+> - `schema.sql` — the full schema (Steps 1–9) for fresh Supabase projects
+> - `001_add_daily_frequency.sql` through `003_atomic_total_collected.sql` — sequential migrations for existing projects
 
 ### Step 4 — Auto-create profile trigger
 
@@ -272,6 +278,73 @@ create policy "cycles: read all" on public.cycles for select using (auth.role() 
 
 -- contributions: authenticated users can read
 create policy "contributions: read all" on public.contributions for select using (auth.role() = 'authenticated');
+```
+
+### Step 7 — RPCs (atomic operations)
+
+Replace the old fetch-then-update pattern with atomic SQL functions to prevent race conditions on `total_collected`.
+
+```sql
+-- Atomic increment (call after contribution insert)
+create or replace function public.increment_total_collected(cycle_id uuid, amount_to_add float)
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  update public.cycles
+  set total_collected = total_collected + amount_to_add
+  where id = cycle_id;
+end;
+$$;
+
+-- Atomic decrement (call after contribution delete)
+create or replace function public.decrement_total_collected(cycle_id uuid, amount_to_remove float)
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  update public.cycles
+  set total_collected = total_collected - amount_to_remove
+  where id = cycle_id;
+end;
+$$;
+
+-- Shared trigger function for auto-updating updated_at
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+```
+
+### Step 8 — updated_at triggers
+
+```sql
+create trigger set_cycles_updated_at
+  before update on public.cycles
+  for each row execute procedure public.set_updated_at();
+
+create trigger set_contributions_updated_at
+  before update on public.contributions
+  for each row execute procedure public.set_updated_at();
+```
+
+### Step 9 — Performance indexes
+
+```sql
+create index if not exists idx_cycles_group_id          on public.cycles (group_id);
+create index if not exists idx_cycles_group_status      on public.cycles (group_id, status);
+create index if not exists idx_contributions_cycle_id   on public.contributions (cycle_id);
+create index if not exists idx_contributions_group_id   on public.contributions (group_id);
+create index if not exists idx_group_members_group_id   on public.group_members (group_id);
+create index if not exists idx_group_members_user_id    on public.group_members (user_id);
 ```
 
 ---

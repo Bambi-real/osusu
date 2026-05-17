@@ -1,4 +1,4 @@
-const supabaseAdmin = require('../lib/supabase');
+const { supabaseAdmin } = require('../lib/supabase');
 
 exports.getCyclesByGroup = async (req, res, next) => {
   try {

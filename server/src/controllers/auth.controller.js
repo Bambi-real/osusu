@@ -1,5 +1,4 @@
-const supabaseAdmin = require('../lib/supabase');
-const { createClient } = require('@supabase/supabase-js');
+const { supabaseAdmin, supabaseAnon } = require('../lib/supabase');
 
 exports.register = async (req, res, next) => {
   try {
@@ -63,10 +62,7 @@ exports.register = async (req, res, next) => {
     }
 
     // Sign in to get session
-    const tempClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false }
-    });
-    const { data: signInData, error: signInError } = await tempClient.auth.signInWithPassword({
+    const { data: signInData, error: signInError } = await supabaseAnon.auth.signInWithPassword({
       email,
       password
     });
@@ -101,10 +97,7 @@ exports.login = async (req, res, next) => {
        return res.status(400).json({ success: false, error: { message: 'Email and password required' } });
     }
 
-    const tempClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false }
-    });
-    const { data: signInData, error: signInError } = await tempClient.auth.signInWithPassword({
+    const { data: signInData, error: signInError } = await supabaseAnon.auth.signInWithPassword({
       email,
       password
     });

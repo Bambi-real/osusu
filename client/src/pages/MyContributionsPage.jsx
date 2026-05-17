@@ -11,8 +11,22 @@ export default function MyContributionsPage() {
   const [expandedGroups, setExpandedGroups] = useState({});
 
   useEffect(() => {
+    let cancelled = false;
     document.title = 'My Contribution History — OsusuApp';
-    fetchMyContributions();
+
+    const loadData = async () => {
+      try {
+        const res = await api.get('/contributions/my');
+        if (!cancelled) setContributions(res.data.data || []);
+      } catch {
+        if (!cancelled) setError('Failed to load contributions.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadData();
+    return () => { cancelled = true; };
   }, []);
 
   const fetchMyContributions = async () => {

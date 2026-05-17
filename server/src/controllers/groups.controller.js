@@ -1,4 +1,4 @@
-const supabaseAdmin = require('../lib/supabase');
+const { supabaseAdmin } = require('../lib/supabase');
 const { generatePayoutSchedule } = require('../utils/generatePayoutSchedule');
 const { shuffle } = require('../utils/shuffle');
 
@@ -30,10 +30,14 @@ exports.createGroup = async (req, res, next) => {
     }
 
     // Update profiles to ORGANISER
-    await supabaseAdmin
+    const { error: roleError } = await supabaseAdmin
       .from('profiles')
-      .update({ role: 'ORGANISER' })
+      .update({ role: 'ORGANISER', updated_at: new Date().toISOString() })
       .eq('id', req.user.id);
+
+    if (roleError) {
+      console.error('[INFO] Failed to update profile role to ORGANISER:', roleError);
+    }
 
     // Insert into group_members
     const { error: memberError } = await supabaseAdmin
@@ -238,7 +242,7 @@ exports.joinGroup = async (req, res, next) => {
   }
 };
 
-exports.deleteGroup = async (req, res) => {
+exports.deleteGroup = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -277,15 +281,11 @@ exports.deleteGroup = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('deleteGroup exception:', err);
-    return res.status(500).json({
-      success: false,
-      error: { message: 'An unexpected error occurred.' },
-    });
+    next(err);
   }
 };
 
-exports.cancelGroup = async (req, res) => {
+exports.cancelGroup = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -331,11 +331,7 @@ exports.cancelGroup = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('cancelGroup exception:', err);
-    return res.status(500).json({
-      success: false,
-      error: { message: 'An unexpected error occurred.' },
-    });
+    next(err);
   }
 };
 
@@ -353,7 +349,12 @@ exports.startGroup = async (req, res, next) => {
     }
 
     if (new Date(group.start_date) < new Date()) {
-       group.start_date = new Date();
+       const newStartDate = new Date().toISOString();
+       await supabaseAdmin
+         .from('groups')
+         .update({ start_date: newStartDate })
+         .eq('id', id);
+       group.start_date = newStartDate;
     }
 
     // Fetch members (sorted by join order via payout_order)
@@ -415,7 +416,7 @@ exports.startGroup = async (req, res, next) => {
     // Update group status
     const { data: updatedGroup, error: statusError } = await supabaseAdmin
       .from('groups')
-      .update({ status: 'ACTIVE', updated_at: new Date() })
+      .update({ status: 'ACTIVE', updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();

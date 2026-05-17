@@ -75,8 +75,24 @@ export default function CreateGroupPage() {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(inviteCode);
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteCode);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = inviteCode;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      try {
+        document.execCommand('copy');
+      } catch (execErr) {
+        console.error('[INFO] Copy fallback failed:', execErr);
+      }
+      document.body.removeChild(el);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
