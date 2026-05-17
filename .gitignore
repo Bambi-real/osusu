@@ -1,2 +1,23 @@
-.idea
+# Dependencies
+node_modules/
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.*.local
+*.local
+
+# Build output
+client/dist/
+
+# Editor
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project task files
 OPENCODE_TASK.md
+CLAUDE_TASK.md
