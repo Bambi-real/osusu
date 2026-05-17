@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import api from '../api/axios';
@@ -13,15 +13,29 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
+
+  useEffect(() => {
+    document.title = 'Sign In — OsusuApp';
+  }, []);
+
+  const clearErrors = () => {
+    setEmailError(null);
+    setPasswordError(null);
+    setError(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { email, password } = e.target.elements;
     try {
       const res = await api.post('/auth/login', { 
-        email: email.value, 
-        password: password.value 
+        email, 
+        password 
       });
       const { token, refreshToken, user } = res.data.data;
       
@@ -29,7 +43,10 @@ export default function LoginPage() {
       setLoggedInUser(user);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Login failed. Please try again.');
+      const msg = err.response?.data?.error?.message || 'Login failed. Please try again.';
+      if (msg.toLowerCase().includes('email')) setEmailError(msg);
+      else if (msg.toLowerCase().includes('password')) setPasswordError(msg);
+      else setError(msg);
     } finally {
       setLoading(false);
     }
@@ -49,18 +66,30 @@ export default function LoginPage() {
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
-          <Input label="Email address" name="email" type="email" required placeholder="Enter your email" />
+          <Input
+            label="Email address"
+            name="email"
+            type="email"
+            required
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(null); clearErrors(); }}
+            error={emailError}
+          />
           
           <div className="relative">
-            <Input 
-              label="Password" 
-              name="password" 
-              type={showPassword ? "text" : "password"} 
-              required 
+            <Input
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(null); clearErrors(); }}
+              error={passwordError}
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 focus:outline-none"
               onClick={() => setShowPassword(!showPassword)}
             >
@@ -72,7 +101,7 @@ export default function LoginPage() {
             </button>
           </div>
           
-          {error && <div className="text-red-500 text-sm font-medium p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
+          {error && <p className="text-xs text-red-600 flex items-center gap-1"><span>⚠</span> {error}</p>}
           
           <Button type="submit" loading={loading} className="w-full">
             Sign in

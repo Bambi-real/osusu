@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import api from '../api/axios';
@@ -13,41 +13,58 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  useEffect(() => {
+    document.title = 'Create Account — OsusuApp';
+  }, []);
+
+  const clearError = (field) => {
+    setFieldErrors(prev => ({ ...prev, [field]: null }));
+    setError(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
-    const { fullName, email, phone, password, confirmPassword } = e.target.elements;
+    setFieldErrors({});
 
-    if (password.value !== confirmPassword.value) {
-        setError('Passwords do not match');
-        setLoading(false);
-        return;
+    if (password !== confirmPassword) {
+      setFieldErrors({ confirmPassword: 'Passwords do not match' });
+      setLoading(false);
+      return;
     }
 
-    const fullPhone = '+220' + phone.value;
+    const fullPhone = '+220' + phone;
 
     if (!/^\+220[0-9]{7}$/.test(fullPhone)) {
-        setError('Phone must be 7 digits (after +220)');
-        setLoading(false);
-        return;
+      setFieldErrors({ phone: 'Phone must be 7 digits (after +220)' });
+      setLoading(false);
+      return;
     }
 
     try {
-      const res = await api.post('/auth/register', { 
-        fullName: fullName.value,
-        email: email.value, 
+      const res = await api.post('/auth/register', {
+        fullName,
+        email,
         phone: fullPhone,
-        password: password.value 
+        password,
       });
       const { token, refreshToken, user } = res.data.data;
-      
+
       await supabase.auth.setSession({ access_token: token, refresh_token: refreshToken });
       setLoggedInUser(user);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Registration failed. Please try again.');
+      const msg = err.response?.data?.error?.message || 'Registration failed. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -67,12 +84,30 @@ export default function RegisterPage() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <Input label="Full Name" name="fullName" type="text" required placeholder="Aisha Bojang" />
-          <Input label="Email address" name="email" type="email" required placeholder="aisha@example.com" />
-          
-          <div className="relative">
+          <Input
+            label="Full Name"
+            name="fullName"
+            type="text"
+            required
+            placeholder="Aisha Bojang"
+            value={fullName}
+            onChange={(e) => { setFullName(e.target.value); clearError('fullName'); }}
+            error={fieldErrors.fullName}
+          />
+          <Input
+            label="Email address"
+            name="email"
+            type="email"
+            required
+            placeholder="aisha@example.com"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
+            error={fieldErrors.email}
+          />
+
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-            <div className="flex rounded-md shadow-sm border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500">
+            <div className="flex rounded-lg border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500 transition-colors">
               <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm font-medium border-r border-gray-300">
                 +220
               </span>
@@ -81,21 +116,31 @@ export default function RegisterPage() {
                 name="phone"
                 required
                 placeholder="3XXXXXX"
-                className="flex-1 block w-full px-3 py-2 sm:text-sm border-none focus:ring-0"
+                value={phone}
+                onChange={(e) => { setPhone(e.target.value); clearError('phone'); }}
+                className="flex-1 block w-full px-3 py-2.5 text-sm border-none focus:ring-0 text-gray-900"
               />
             </div>
+            {fieldErrors.phone && (
+              <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.phone}
+              </p>
+            )}
           </div>
 
           <div className="relative">
-            <Input 
-              label="Password" 
-              name="password" 
-              type={showPassword ? "text" : "password"} 
-              required 
+            <Input
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              required
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); clearError('password'); }}
+              error={fieldErrors.password}
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 focus:outline-none"
               onClick={() => setShowPassword(!showPassword)}
             >
@@ -108,17 +153,20 @@ export default function RegisterPage() {
           </div>
 
           <div className="relative">
-            <Input 
-              label="Confirm Password" 
-              name="confirmPassword" 
-              type={showPassword ? "text" : "password"} 
-              required 
+            <Input
+              label="Confirm Password"
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              required
               placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => { setConfirmPassword(e.target.value); clearError('confirmPassword'); }}
+              error={fieldErrors.confirmPassword}
             />
           </div>
-          
-          {error && <div className="text-red-500 text-sm font-medium p-3 bg-red-50 rounded-lg border border-red-200">{error}</div>}
-          
+
+          {error && <p className="text-xs text-red-600 flex items-center gap-1"><span>⚠</span> {error}</p>}
+
           <Button type="submit" loading={loading} className="w-full">
             Register
           </Button>
