@@ -8,57 +8,63 @@ const frequencyLabel = {
   MONTHLY: 'Monthly',
 };
 
-const frequencyBadgeColor = {
-  DAILY: 'bg-purple-100 text-purple-700',
-  WEEKLY: 'bg-blue-100 text-blue-700',
-  MONTHLY: 'bg-green-100 text-green-700',
+const topBorderColor = {
+  FORMING: 'border-t-4 border-t-gray-300',
+  ACTIVE: 'border-t-4 border-t-green-500',
+  COMPLETED: 'border-t-4 border-t-blue-500',
+  CANCELLED: 'border-t-4 border-t-red-300',
 };
 
-export default function GroupCard({ group }) {
-  let borderClass = 'border-t-4 border-gray-400';
-  if (group.status === 'ACTIVE') borderClass = 'border-t-4 border-emerald-500';
-  else if (group.status === 'COMPLETED') borderClass = 'border-t-4 border-blue-500';
+export default function GroupCard({ group, isOrganiser }) {
+  const borderClass = topBorderColor[group.status] || topBorderColor.FORMING;
 
-  const cardClassName = `group block bg-white ${borderClass} overflow-hidden shadow-md rounded-[24px] hover:shadow-xl transition-all duration-300 ${group.status === 'CANCELLED' ? 'opacity-60 grayscale-[30%]' : ''}`;
+  const cardClassName = `group block bg-white ${borderClass} overflow-hidden shadow-sm rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 min-w-0 ${group.status === 'CANCELLED' ? 'opacity-50' : ''}`;
 
   return (
-    <Link 
+    <Link
       to={`/groups/${group.id}`}
       className={cardClassName}
     >
-      <div className="px-6 py-7 flex flex-col h-full justify-between gap-4">
-        <div className="flex justify-between items-center gap-3">
-          <h3 className="text-xl font-extrabold text-slate-800 tracking-tight line-clamp-1">
+      <div className="p-5 flex flex-col h-full justify-between gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <Badge status={group.status} />
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${group.frequency === 'DAILY' ? 'bg-purple-100 text-purple-700' : group.frequency === 'WEEKLY' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+            {frequencyLabel[group.frequency] || group.frequency}
+          </span>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
             {group.name}
           </h3>
-          <Badge status={group.status} className="shrink-0" />
+          {isOrganiser && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 mt-1">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+              Organiser
+            </span>
+          )}
         </div>
-        
-        <p className="text-sm text-gray-500 line-clamp-2">
-          {group.description || 'No description provided.'}
+
+        <p className="text-sm text-gray-400 line-clamp-2">
+          {group.description || 'No description'}
         </p>
-        
-        <hr className="border-t border-slate-100/80" />
-        
+
+        <hr className="border-t border-gray-100" />
+
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-green-600">
+          <div>
+            <p className="text-lg font-bold text-green-700 whitespace-nowrap">
               {formatCurrency(group.contribution_amount)}
-            </span>
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${frequencyBadgeColor[group.frequency] || 'bg-slate-100 text-slate-600'}`}>
-              {frequencyLabel[group.frequency] || group.frequency}
-            </span>
+            </p>
+            <p className="text-xs text-gray-400">per {frequencyLabel[group.frequency]?.toLowerCase()} cycle</p>
           </div>
-          
-          <div className="flex items-center gap-4 text-sm font-bold text-slate-700">
-            <div className="flex flex-col items-end" title={`You receive the payout in Cycle ${group.payout_order}`}>
-              <span className="text-xs text-slate-400 font-normal">Your Draw</span>
-              <span>#{group.payout_order} of {group.max_members}</span>
-            </div>
-            <div className="flex flex-col items-end">
-              <span className="text-xs text-slate-400 font-normal">Members</span>
-              <span>{group.max_members}</span>
-            </div>
+          <div className="text-right">
+            <p className="text-sm font-semibold text-gray-900">
+              Draw #{group.payout_order}
+            </p>
+            <p className="text-xs text-gray-400">
+              of {group.max_members}
+            </p>
           </div>
         </div>
       </div>
