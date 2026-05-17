@@ -3,7 +3,7 @@ create extension if not exists "uuid-ossp";
 
 -- Step 2 — Create enums
 create type role_type       as enum ('MEMBER', 'ORGANISER');
-create type frequency_type  as enum ('WEEKLY', 'MONTHLY');
+create type frequency_type  as enum ('DAILY', 'WEEKLY', 'MONTHLY');
 create type group_status    as enum ('FORMING', 'ACTIVE', 'COMPLETED');
 create type cycle_status    as enum ('PENDING', 'COLLECTING', 'PAID_OUT');
 

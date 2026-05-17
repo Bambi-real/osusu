@@ -11,6 +11,12 @@ export function formatDate(dateString) {
   });
 }
 
+export function formatDateWithDay(dateString) {
+  return new Date(dateString).toLocaleDateString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+  });
+}
+
 export function formatRelativeDate(dateString) {
   const diff = Math.round((new Date(dateString) - new Date()) / (1000 * 60 * 60 * 24));
   if (diff === 0)  return 'Today';
