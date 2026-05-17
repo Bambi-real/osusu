@@ -16,13 +16,15 @@ const frequencyBadgeColor = {
 
 export default function GroupCard({ group }) {
   let borderClass = 'border-t-4 border-gray-400';
-  if (group.status === 'active') borderClass = 'border-t-4 border-emerald-500';
-  else if (group.status === 'completed') borderClass = 'border-t-4 border-blue-500';
+  if (group.status === 'ACTIVE') borderClass = 'border-t-4 border-emerald-500';
+  else if (group.status === 'COMPLETED') borderClass = 'border-t-4 border-blue-500';
+
+  const cardClassName = `group block bg-white ${borderClass} overflow-hidden shadow-md rounded-[24px] hover:shadow-xl transition-all duration-300 ${group.status === 'CANCELLED' ? 'opacity-60 grayscale-[30%]' : ''}`;
 
   return (
     <Link 
       to={`/groups/${group.id}`}
-      className={`group block bg-white ${borderClass} overflow-hidden shadow-md rounded-[24px] hover:shadow-xl transition-all duration-300`}
+      className={cardClassName}
     >
       <div className="px-6 py-7 flex flex-col h-full justify-between gap-4">
         <div className="flex justify-between items-center gap-3">

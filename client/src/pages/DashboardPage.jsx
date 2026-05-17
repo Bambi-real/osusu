@@ -69,10 +69,11 @@ export default function DashboardPage() {
   }
 
   const totalContributions = groups.reduce((acc, g) => acc + (g.contribution_amount || 0), 0);
-  const activeGroups = groups.filter(g => g.status === 'active').length;
+  const activeGroupsCount = groups.filter(g => g.status !== 'CANCELLED' && g.status !== 'COMPLETED').length;
 
-  const organisedGroups = groups.filter(g => g.organiser_id === user?.id);
-  const joinedGroups = groups.filter(g => g.organiser_id !== user?.id);
+  const organisedGroups = groups.filter(g => g.organiser_id === user?.id && g.status !== 'CANCELLED');
+  const joinedGroups = groups.filter(g => g.organiser_id !== user?.id && g.status !== 'CANCELLED');
+  const cancelledGroups = groups.filter(g => g.status === 'CANCELLED');
 
   return (
     <PageWrapper>
@@ -130,7 +131,7 @@ export default function DashboardPage() {
              </div>
              <div>
                <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Active Cycles</p>
-               <p className="text-3xl font-black text-slate-800 tracking-tight">{activeGroups}</p>
+               <p className="text-3xl font-black text-slate-800 tracking-tight">{activeGroupsCount}</p>
              </div>
            </div>
          </div>
@@ -193,6 +194,22 @@ export default function DashboardPage() {
             </div>
           )}
 
+        </div>
+      )}
+
+      {cancelledGroups.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-base font-semibold text-gray-400 mb-4 flex items-center gap-2">
+            <span>Archived Groups</span>
+            <span className="text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5">
+              {cancelledGroups.length}
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cancelledGroups.map(group => (
+              <GroupCard key={group.id} group={group} />
+            ))}
+          </div>
         </div>
       )}
 

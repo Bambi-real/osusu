@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import Modal from '../components/common/Modal';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { formatCurrency, formatDate } from '../utils/helpers';
+import { deleteGroup, cancelGroup } from '../api/groups';
 import ScheduleTab from '../components/groups/ScheduleTab';
 import ContributionsTab from '../components/groups/ContributionsTab';
 
@@ -21,6 +24,9 @@ export default function GroupDetailPage() {
   const [startLoading, setStartLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const fetchGroupData = async () => {
     try {
@@ -47,6 +53,37 @@ export default function GroupDetailPage() {
       alert(err.response?.data?.error?.message || 'Failed to start group.');
     } finally {
       setStartLoading(false);
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    setActionLoading(true);
+    try {
+      await deleteGroup(group.id);
+      toast.success('Group deleted successfully.');
+      navigate('/dashboard');
+    } catch (err) {
+      const message = err.response?.data?.error?.message || 'Failed to delete group.';
+      toast.error(message);
+      setShowDeleteModal(false);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCancelGroup = async () => {
+    setActionLoading(true);
+    try {
+      const res = await cancelGroup(group.id);
+      toast.success('Group archived. All records have been preserved.');
+      setData(prev => ({ ...prev, group: res.data }));
+      setShowCancelModal(false);
+    } catch (err) {
+      const message = err.response?.data?.error?.message || 'Failed to archive group.';
+      toast.error(message);
+      setShowCancelModal(false);
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -149,7 +186,7 @@ export default function GroupDetailPage() {
             Overview
           </button>
           
-          {group.status !== 'FORMING' && (
+          {(group.status === 'ACTIVE' || group.status === 'COMPLETED') && (
             <button 
               className={`py-4 border-b-2 outline-none focus:outline-none ${activeTab === 'contributions' ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-green-700'}`}
               onClick={() => setActiveTab('contributions')}
@@ -168,6 +205,22 @@ export default function GroupDetailPage() {
           )}
         </div>
       </div>
+
+      {group.status === 'CANCELLED' && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+          <span className="text-red-500 text-lg mt-0.5">⚠️</span>
+          <div>
+            <p className="text-sm font-semibold text-red-700">
+              This group has been cancelled
+            </p>
+            <p className="text-sm text-red-600 mt-0.5">
+              No new contributions can be recorded. All existing records are preserved
+              below for your reference. Please contact the organiser if you have
+              outstanding amounts.
+            </p>
+          </div>
+        </div>
+      )}
 
       {activeTab === 'overview' && (
         <>
@@ -255,6 +308,40 @@ export default function GroupDetailPage() {
               </table>
             </div>
           </div>
+
+          {isOrganiser && group.status !== 'CANCELLED' && (
+            <div className="mt-10 pt-6 border-t border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+                Group Management
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {group.status === 'FORMING' && (
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 
+                               text-red-600 text-sm font-medium hover:bg-red-50 transition-all"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete Group
+                  </button>
+                )}
+                {group.status === 'ACTIVE' && (
+                  <button
+                    onClick={() => setShowCancelModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-200 
+                               text-amber-700 text-sm font-medium hover:bg-amber-50 transition-all"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                    Archive Group
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </>
       )}
 
@@ -269,6 +356,121 @@ export default function GroupDetailPage() {
            currentCycle={currentCycle} 
          />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => !actionLoading && setShowDeleteModal(false)}
+        title="Delete Group"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-red-50 rounded-lg border border-red-200">
+            <span className="text-red-500 text-xl">⚠️</span>
+            <div>
+              <p className="text-sm font-semibold text-red-700">
+                This action cannot be undone.
+              </p>
+              <p className="text-sm text-red-600 mt-1">
+                Deleting <strong>{group.name}</strong> will permanently remove the group
+                and all {members.length} member(s) will lose access immediately.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-sm text-gray-500">
+            Since this group has not started yet, no financial records will be lost.
+          </p>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              disabled={actionLoading}
+              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700
+                         text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteGroup}
+              disabled={actionLoading}
+              className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white text-sm
+                         font-semibold hover:bg-red-700 disabled:opacity-50 transition-all
+                         flex items-center justify-center gap-2"
+            >
+              {actionLoading ? <LoadingSpinner size="sm" /> : null}
+              {actionLoading ? 'Deleting...' : 'Yes, Delete Group'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Archive Confirmation Modal */}
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => !actionLoading && setShowCancelModal(false)}
+        title="Archive Group"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+            <span className="text-amber-500 text-xl">📦</span>
+            <div>
+              <p className="text-sm font-semibold text-amber-700">
+                This will stop all group activity.
+              </p>
+              <p className="text-sm text-amber-600 mt-1">
+                Archiving <strong>{group.name}</strong> will prevent any new contributions
+                from being recorded. All existing contribution history will be preserved
+                and members can still view their records.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3 bg-gray-50 rounded-lg">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              What happens next
+            </p>
+            <ul className="space-y-1">
+              <li className="text-sm text-gray-600 flex items-center gap-2">
+                <span className="text-green-500">✓</span>
+                All contribution history is kept permanently
+              </li>
+              <li className="text-sm text-gray-600 flex items-center gap-2">
+                <span className="text-green-500">✓</span>
+                Members can still view the group and their records
+              </li>
+              <li className="text-sm text-gray-600 flex items-center gap-2">
+                <span className="text-red-400">✗</span>
+                No new contributions can be recorded
+              </li>
+              <li className="text-sm text-gray-600 flex items-center gap-2">
+                <span className="text-red-400">✗</span>
+                This cannot be reversed
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={() => setShowCancelModal(false)}
+              disabled={actionLoading}
+              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700
+                         text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-all"
+            >
+              Keep Group Active
+            </button>
+            <button
+              onClick={handleCancelGroup}
+              disabled={actionLoading}
+              className="flex-1 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm
+                         font-semibold hover:bg-amber-600 disabled:opacity-50 transition-all
+                         flex items-center justify-center gap-2"
+            >
+              {actionLoading ? <LoadingSpinner size="sm" /> : null}
+              {actionLoading ? 'Archiving...' : 'Archive Group'}
+            </button>
+          </div>
+        </div>
+      </Modal>
 
     </PageWrapper>
   );
