@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import api from '../../api/axios';
 import { formatCurrency, formatDate } from '../../utils/helpers';
 import Badge from '../common/Badge';
@@ -117,10 +118,16 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
     setActionLoading(true);
     try {
       await api.put(`/cycles/${selectedCycleId}/complete`);
-      await fetchCycles();
-      await fetchCycleDetail(selectedCycleId);
+      toast.success('Cycle completed!');
+      const res = await api.get(`/cycles/group/${groupId}`);
+      const updatedCycles = res.data.data;
+      setCycles(updatedCycles);
+      const nextCollecting = updatedCycles.find(c => c.status === 'COLLECTING');
+      if (nextCollecting) {
+        setSelectedCycleId(nextCollecting.id);
+      }
     } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to complete cycle');
+      toast.error('Failed to complete cycle.');
     } finally {
       setActionLoading(false);
     }

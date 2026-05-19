@@ -4,6 +4,7 @@ import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import BackButton from '../components/common/BackButton';
 import { formatCurrency, formatDate } from '../utils/helpers';
 
 const frequencyLabel = {
@@ -143,6 +144,7 @@ export default function CreateGroupPage() {
   return (
     <PageWrapper>
       <div className="max-w-3xl mx-auto pt-6 pb-12">
+        <BackButton to="/dashboard" label="Back to Dashboard" />
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900">Create a New Group</h1>
           <p className="text-gray-500 mt-2">Set up your osusu parameters in 3 simple steps.</p>

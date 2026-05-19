@@ -5,23 +5,49 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
 });
 
-api.interceptors.request.use(async (config) => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.access_token) {
-    config.headers.Authorization = `Bearer ${session.access_token}`;
-  }
-  return config;
-});
+api.interceptors.request.use(
+  async (config) => {
+    const publicEndpoints = [
+      '/auth/login',
+      '/auth/register',
+      '/auth/forgot-password',
+      '/auth/reset-password',
+    ];
+    const isPublic = publicEndpoints.some(
+      ep => config.url?.includes(ep)
+    );
+
+    if (!isPublic) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        config.headers.Authorization = `Bearer ${session.access_token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
-  (res) => res,
-  async (err) => {
-    if (err.response?.status === 401) {
-      await supabase.auth.signOut();
-      window.location.href = '/login';
-      return Promise.reject(err);
+  (response) => response,
+  async (error) => {
+    const publicPaths = [
+      '/', '/login', '/register',
+      '/forgot-password', '/reset-password'
+    ];
+    const isOnPublicPage = publicPaths.includes(window.location.pathname);
+
+    if (error.response?.status === 401 && !isOnPublicPage) {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        await supabase.auth.signOut();
+        window.location.href = '/login?reason=session_expired';
+        return Promise.reject(error);
+      }
     }
-    return Promise.reject(err);
+
+    return Promise.reject(error);
   }
 );
 

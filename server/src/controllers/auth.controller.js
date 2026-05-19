@@ -71,9 +71,6 @@ exports.register = async (req, res, next) => {
       return res.status(500).json({ success: false, error: { message: 'Error logging in after registration' } });
     }
 
-    const token = signInData.session.access_token;
-    const refreshToken = signInData.session.refresh_token;
-
     const safeProfileObject = {
       id: userProfile.id,
       email: email,
@@ -83,7 +80,15 @@ exports.register = async (req, res, next) => {
       createdAt: userProfile.created_at
     };
 
-    res.status(201).json({ success: true, data: { token, refreshToken, user: safeProfileObject } });
+    res.status(201).json({
+      success: true,
+      data: {
+        access_token:  signInData.session.access_token,
+        refresh_token: signInData.session.refresh_token,
+        expires_at:    signInData.session.expires_at,
+        user:          safeProfileObject,
+      }
+    });
 
   } catch (error) {
     next(error);
@@ -106,9 +111,6 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ success: false, error: { message: 'Invalid credentials' } });
     }
 
-    const token = signInData.session.access_token;
-    const refreshToken = signInData.session.refresh_token;
-    
     const { data: userProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('id, full_name, phone, role, created_at')
@@ -128,7 +130,15 @@ exports.login = async (req, res, next) => {
       createdAt: userProfile.created_at
     };
 
-    res.status(200).json({ success: true, data: { token, refreshToken, user: safeProfileObject } });
+    res.status(200).json({
+      success: true,
+      data: {
+        access_token:  signInData.session.access_token,
+        refresh_token: signInData.session.refresh_token,
+        expires_at:    signInData.session.expires_at,
+        user:          safeProfileObject,
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -219,4 +229,101 @@ exports.changePassword = async (req, res, next) => {
     } catch(error) {
         next(error);
     }
-}
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email?.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Email address is required.' }
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Please enter a valid email address.' }
+      });
+    }
+
+    await supabaseAdmin.auth.resetPasswordForEmail(
+      email.trim().toLowerCase(),
+      { redirectTo: `${process.env.CLIENT_URL}/reset-password` }
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: null,
+      message: 'If that email is registered, a reset link has been sent.',
+    });
+
+  } catch (err) {
+    console.error('[INFO] forgotPassword error:', err);
+    return res.status(200).json({
+      success: true,
+      data: null,
+      message: 'If that email is registered, a reset link has been sent.',
+    });
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { newPassword, accessToken } = req.body;
+
+    if (!newPassword || !accessToken) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'New password and reset token are required.'
+        }
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Password must be at least 8 characters long.'
+        }
+      });
+    }
+
+    const { data: { user }, error: getUserError } = await supabaseAdmin.auth.getUser(accessToken);
+
+    if (getUserError || !user) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          message: 'This reset link is invalid or has expired. Please request a new one.'
+        }
+      });
+    }
+
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      user.id,
+      { password: newPassword }
+    );
+
+    if (updateError) {
+      console.error('[INFO] resetPassword update error:', updateError);
+      return res.status(500).json({
+        success: false,
+        error: { message: 'Failed to update password. Please try again.' }
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: null,
+      message: 'Password updated successfully.',
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};

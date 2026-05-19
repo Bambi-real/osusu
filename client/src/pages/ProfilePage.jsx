@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import BackButton from '../components/common/BackButton';
+import Breadcrumb from '../components/common/Breadcrumb';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 
 export default function ProfilePage() {
-  const { user, setLoggedInUser } = useAuth();
+  const { user, setLoggedInUser, refreshUser } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -40,11 +42,11 @@ export default function ProfilePage() {
         phoneValue = '+220' + phoneValue.replace(/^\+220/, '');
       }
 
-      const res = await api.put('/auth/profile', {
+      await api.put('/auth/profile', {
         fullName,
         phone: phoneValue,
       });
-      setLoggedInUser(res.data.data);
+      await refreshUser();
       setSaveState('success');
       setTimeout(() => setSaveState('idle'), 2000);
     } catch (err) {
@@ -80,6 +82,11 @@ export default function ProfilePage() {
   return (
     <PageWrapper>
       <div className="page-enter max-w-4xl mx-auto space-y-8">
+        <BackButton fallback="/dashboard" />
+        <Breadcrumb items={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Account Settings' }
+        ]} />
         <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
 
         {/* Profile header card */}

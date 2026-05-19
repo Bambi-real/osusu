@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
@@ -12,6 +13,7 @@ import { formatCurrency, formatRelativeDate } from '../utils/helpers';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,13 +70,24 @@ export default function DashboardPage() {
     setJoinLoading(true);
     setJoinError(null);
     try {
-      await api.post('/groups/join', { inviteCode: inviteCode.trim() });
-      setIsJoinModalOpen(false);
+      const res = await api.post('/groups/join', { inviteCode: inviteCode.trim() });
+      const groupId = res.data.data.group_id || res.data.data.id;
+      toast.success(`You've joined ${res.data.data.name || 'the group'}!`);
+      setShowJoinModal(false);
       setInviteCode('');
-      setLoading(true);
-      fetchData();
+      setTimeout(() => navigate(`/groups/${groupId}`), 800);
     } catch (err) {
-      setJoinError(err.response?.data?.error?.message || 'Failed to join group.');
+      const status = err.response?.status;
+      const msg    = err.response?.data?.error?.message;
+      if (status === 404) {
+        setJoinError('Invite code not found. Check the code and try again.');
+      } else if (status === 409) {
+        setJoinError('You are already a member of this group.');
+      } else if (status === 400) {
+        setJoinError(msg || 'This group is not accepting new members.');
+      } else {
+        setJoinError(msg || 'Something went wrong. Please try again.');
+      }
     } finally {
       setJoinLoading(false);
     }

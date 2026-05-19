@@ -6,6 +6,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import Breadcrumb from '../components/common/Breadcrumb';
 import Modal from '../components/common/Modal';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { formatCurrency, formatDate, formatRelativeDate } from '../utils/helpers';
@@ -171,19 +172,10 @@ export default function GroupDetailPage() {
   return (
     <PageWrapper>
       <div className="page-enter space-y-6">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm">
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="text-gray-400 hover:text-green-600 transition-colors"
-          >
-            Dashboard
-          </button>
-          <span className="text-gray-300">/</span>
-          <span className="text-gray-600 font-medium truncate max-w-[200px]">
-            {group.name}
-          </span>
-        </nav>
+        <Breadcrumb items={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: group?.name || 'Group' }
+        ]} />
 
         {/* Group Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">

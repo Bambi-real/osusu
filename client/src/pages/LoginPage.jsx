@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,7 @@ import Button from '../components/common/Button';
 export default function LoginPage() {
   const navigate = useNavigate();
   const { setLoggedInUser } = useAuth();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,26 @@ export default function LoginPage() {
   useEffect(() => {
     document.title = 'Sign In — OsusuApp';
   }, []);
+
+  const reason = searchParams.get('reason');
+
+  const sessionMessages = {
+    session_expired: {
+      icon: '⏱',
+      text: 'Your session expired. Please sign in again.',
+      style: 'bg-amber-50 border-amber-200 text-amber-700',
+    },
+    signed_out: {
+      icon: '👋',
+      text: 'You have been signed out.',
+      style: 'bg-blue-50 border-blue-200 text-blue-700',
+    },
+    password_reset: {
+      icon: '✅',
+      text: 'Password updated. Please sign in with your new password.',
+      style: 'bg-green-50 border-green-200 text-green-700',
+    },
+  };
 
   const clearErrors = () => {
     setEmailError(null);
@@ -37,16 +58,25 @@ export default function LoginPage() {
         email, 
         password 
       });
-      const { token, refreshToken, user } = res.data.data;
+      const { access_token, refresh_token, user } = res.data.data;
       
-      await supabase.auth.setSession({ access_token: token, refresh_token: refreshToken });
+      await supabase.auth.setSession({ access_token, refresh_token });
       setLoggedInUser(user);
       navigate('/dashboard');
     } catch (err) {
-      const msg = err.response?.data?.error?.message || 'Login failed. Please try again.';
-      if (msg.toLowerCase().includes('email')) setEmailError(msg);
-      else if (msg.toLowerCase().includes('password')) setPasswordError(msg);
-      else setError(msg);
+      const status = err.response?.status;
+      const msg    = err.response?.data?.error?.message;
+      if (status === 401) {
+        setError('Incorrect email or password. Please try again.');
+      } else if (status === 429) {
+        setError('Too many sign-in attempts. Please wait 15 minutes.');
+      } else if (status === 0 || !err.response) {
+        setError('No internet connection. Check your network and retry.');
+      } else if (status >= 500) {
+        setError('Server error. Please try again in a few moments.');
+      } else {
+        setError(msg || 'Sign in failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -99,6 +129,13 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
           <p className="text-gray-500 mb-8">Sign in to your account to continue.</p>
 
+          {reason && sessionMessages[reason] && (
+            <div className={`mb-4 p-3 rounded-lg border flex items-center gap-2 text-sm ${sessionMessages[reason].style}`}>
+              <span>{sessionMessages[reason].icon}</span>
+              <span>{sessionMessages[reason].text}</span>
+            </div>
+          )}
+
           <form className="space-y-5" onSubmit={handleSubmit}>
             <Input
               label="Email address"
@@ -111,17 +148,27 @@ export default function LoginPage() {
               error={emailError}
             />
             
-            <div className="relative">
-              <Input
-                label="Password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(null); clearErrors(); }}
-                error={passwordError}
-              />
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Password <span className="text-red-500">*</span>
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-medium text-green-600 hover:text-green-700 transition-colors">
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(null); clearErrors(); }}
+                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${passwordError ? 'border-red-400' : 'border-gray-300'}`}
+                />
               <button
                 type="button"
                 className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 focus:outline-none"
@@ -133,6 +180,7 @@ export default function LoginPage() {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                 )}
               </button>
+            </div>
             </div>
             
             {error && <p className="text-xs text-red-600 flex items-center gap-1"><span>⚠</span> {error}</p>}

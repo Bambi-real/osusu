@@ -57,9 +57,9 @@ export default function RegisterPage() {
         phone: fullPhone,
         password,
       });
-      const { token, refreshToken, user } = res.data.data;
+      const { access_token, refresh_token, user } = res.data.data;
 
-      await supabase.auth.setSession({ access_token: token, refresh_token: refreshToken });
+      await supabase.auth.setSession({ access_token, refresh_token });
       setLoggedInUser(user);
       navigate('/dashboard');
     } catch (err) {

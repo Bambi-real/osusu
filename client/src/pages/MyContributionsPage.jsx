@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import BackButton from '../components/common/BackButton';
+import Breadcrumb from '../components/common/Breadcrumb';
 import { formatCurrency, formatDate } from '../utils/helpers';
 
 export default function MyContributionsPage() {
@@ -87,6 +89,11 @@ export default function MyContributionsPage() {
     <PageWrapper>
       <div className="page-enter space-y-8">
         <div className="pt-6">
+          <BackButton fallback="/dashboard" />
+          <Breadcrumb items={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'My History' }
+          ]} />
           <h1 className="text-2xl font-bold text-gray-900">My Contribution History</h1>
         </div>
 
