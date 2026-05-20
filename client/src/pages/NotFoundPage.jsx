@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Page Not Found — OsusuApp';
+    document.title = 'Page Not Found — Osusu';
   }, []);
 
   return (

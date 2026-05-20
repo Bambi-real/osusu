@@ -27,7 +27,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     let cancelled = false;
-    document.title = 'Dashboard — OsusuApp';
+    document.title = 'Dashboard — Osusu';
 
     const loadData = async () => {
       try {
@@ -71,9 +71,9 @@ export default function DashboardPage() {
     setJoinError(null);
     try {
       const res = await api.post('/groups/join', { inviteCode: inviteCode.trim() });
-      const groupId = res.data.data.group_id || res.data.data.id;
+      const groupId = res.data.data.groupId;
       toast.success(`You've joined ${res.data.data.name || 'the group'}!`);
-      setShowJoinModal(false);
+      setIsJoinModalOpen(false);
       setInviteCode('');
       setTimeout(() => navigate(`/groups/${groupId}`), 800);
     } catch (err) {

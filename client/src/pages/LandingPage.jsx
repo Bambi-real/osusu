@@ -66,7 +66,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    document.title = 'OsusuApp — Rotating Savings for The Gambia';
+    document.title = 'Osusu — Rotating Savings for The Gambia';
     const handleScroll = () => {
       setScrolled(window.scrollY > 60);
     };
@@ -121,10 +121,17 @@ export default function LandingPage() {
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center text-white font-black text-lg">
-                  O
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white">
+                  <svg viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+                    <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
+                    <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
+                    <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
+                    <circle cx="20" cy="34" r="3.5" fill="currentColor"/>
+                    <circle cx="6" cy="20" r="3.5" fill="currentColor"/>
+                    <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
                 </div>
-                <span className="font-extrabold text-2xl tracking-tighter text-gray-900">OsusuApp</span>
+                <span className="font-extrabold text-2xl tracking-tighter text-gray-900">Osusu</span>
               </Link>
             </div>
 
@@ -233,7 +240,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <p className="text-sm font-semibold tracking-widest text-green-600 uppercase mb-4">How It Works</p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">From signup to your first payout in minutes</h2>
-            <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">OsusuApp handles the admin so your group can focus on saving.</p>
+            <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">Osusu handles the admin so your group can focus on saving.</p>
           </div>
 
           <div className="relative">
@@ -322,7 +329,7 @@ export default function LandingPage() {
                 disputed records, missed contributions, and an unfair burden on the organiser.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                OsusuApp doesn't replace the osusu — it protects it. We give your group the
+                Osusu doesn't replace the osusu — it protects it. We give your group the
                 tools to run smoothly, fairly, and transparently, so the trust that makes osusu
                 work stays strong.
               </p>
@@ -331,7 +338,7 @@ export default function LandingPage() {
               <div className="text-green-400 text-8xl font-serif leading-none absolute top-4 left-6 opacity-60">"</div>
               <p className="italic text-lg leading-relaxed relative z-10 pt-8">
                 The strength of the osusu is the trust between members.
-                OsusuApp makes that trust easier to keep.
+                Osusu makes that trust easier to keep.
               </p>
             </div>
           </div>

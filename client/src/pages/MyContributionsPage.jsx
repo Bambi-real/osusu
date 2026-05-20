@@ -14,7 +14,7 @@ export default function MyContributionsPage() {
 
   useEffect(() => {
     let cancelled = false;
-    document.title = 'My Contribution History — OsusuApp';
+    document.title = 'My Contribution History — Osusu';
 
     const loadData = async () => {
       try {

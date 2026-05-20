@@ -45,11 +45,17 @@ export default function Navbar() {
             {/* Logo */}
             <div className="flex items-center gap-2">
               <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center text-white font-black shadow-green-600/30 shadow-lg group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-white/20 w-full h-1/2 rounded-t-xl" />
-                  <span className="relative z-10 text-lg">O</span>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white shadow-green-600/30 shadow-lg group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                  <svg viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+                    <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
+                    <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
+                    <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
+                    <circle cx="20" cy="34" r="3.5" fill="currentColor"/>
+                    <circle cx="6" cy="20" r="3.5" fill="currentColor"/>
+                    <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
                 </div>
-                <span className="font-extrabold text-2xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-400 group-hover:opacity-80 transition-opacity">OsusuApp</span>
+                <span className="font-extrabold text-2xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-400 group-hover:opacity-80 transition-opacity">Osusu</span>
               </Link>
             </div>
 

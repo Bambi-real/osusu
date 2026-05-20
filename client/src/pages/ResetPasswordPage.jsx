@@ -15,7 +15,7 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Set New Password — OsusuApp';
+    document.title = 'Set New Password — Osusu';
     let cancelled = false;
 
     // Listen for the PASSWORD_RECOVERY event that Supabase fires
@@ -174,11 +174,18 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
 
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center">
-            <span className="text-white font-black text-lg">O</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl flex items-center justify-center text-white">
+            <svg viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+              <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
+              <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
+              <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
+              <circle cx="20" cy="34" r="3.5" fill="currentColor"/>
+              <circle cx="6" cy="20" r="3.5" fill="currentColor"/>
+              <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
           </div>
           <span className="font-bold text-gray-900 text-xl">
-            OsusuApp
+            Osusu
           </span>
         </div>
 

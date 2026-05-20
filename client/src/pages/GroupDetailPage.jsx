@@ -37,9 +37,9 @@ export default function GroupDetailPage() {
 
   useEffect(() => {
     if (data) {
-      document.title = `${data.group.name} — OsusuApp`;
+      document.title = `${data.group.name} — Osusu`;
     } else {
-      document.title = 'Group — OsusuApp';
+      document.title = 'Group — Osusu';
     }
   }, [data]);
 

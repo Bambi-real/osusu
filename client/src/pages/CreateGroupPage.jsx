@@ -33,7 +33,7 @@ export default function CreateGroupPage() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    document.title = 'Create Group — OsusuApp';
+    document.title = 'Create Group — Osusu';
   }, []);
 
   const handleChange = (e) => {

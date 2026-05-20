@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
-    document.title = 'Create Account — OsusuApp';
+    document.title = 'Create Account — Osusu';
   }, []);
 
   const clearError = (field) => {
@@ -75,10 +75,17 @@ export default function RegisterPage() {
       {/* Left panel — desktop only */}
       <div className="hidden lg:flex lg:w-1/2 bg-green-600 flex-col justify-between p-12">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-            <span className="text-green-600 font-black text-lg">O</span>
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-green-600">
+            <svg viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+              <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
+              <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
+              <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
+              <circle cx="20" cy="34" r="3.5" fill="currentColor"/>
+              <circle cx="6" cy="20" r="3.5" fill="currentColor"/>
+              <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
           </div>
-          <span className="text-white font-bold text-xl">OsusuApp</span>
+          <span className="text-white font-bold text-xl">Osusu</span>
         </div>
 
         <div>
@@ -108,10 +115,17 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-black">O</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center text-white">
+              <svg viewBox="0 0 40 40" fill="none" className="w-5 h-5">
+                <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
+                <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
+                <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
+                <circle cx="20" cy="34" r="3.5" fill="currentColor"/>
+                <circle cx="6" cy="20" r="3.5" fill="currentColor"/>
+                <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
             </div>
-            <span className="font-bold text-gray-900">OsusuApp</span>
+            <span className="font-bold text-gray-900">Osusu</span>
           </div>
 
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Create an account</h1>
