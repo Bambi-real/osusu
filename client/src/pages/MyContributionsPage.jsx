@@ -31,17 +31,6 @@ export default function MyContributionsPage() {
     return () => { cancelled = true; };
   }, []);
 
-  const fetchMyContributions = async () => {
-    try {
-      const res = await api.get('/contributions/my');
-      setContributions(res.data.data || []);
-    } catch {
-      setError('Failed to load contributions.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const totalContributed = contributions.reduce((sum, c) => sum + Number(c.amount || 0), 0);
 
   const grouped = contributions.reduce((acc, c) => {

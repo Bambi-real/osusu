@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import PageWrapper from '../components/layout/PageWrapper';
@@ -43,7 +43,7 @@ export default function GroupDetailPage() {
     }
   }, [data]);
 
-  const fetchGroupData = async () => {
+  const fetchGroupData = useCallback(async () => {
     try {
       const res = await api.get(`/groups/${id}`);
       setData(res.data.data);
@@ -52,7 +52,7 @@ export default function GroupDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,7 +60,7 @@ export default function GroupDetailPage() {
       if (cancelled) return;
     });
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, fetchGroupData]);
 
   const handleStartGroup = async () => {
     setStartLoading(true);

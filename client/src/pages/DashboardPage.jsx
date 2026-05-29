@@ -50,21 +50,6 @@ export default function DashboardPage() {
     return () => { cancelled = true; };
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const [groupsRes, contribsRes] = await Promise.all([
-        api.get('/groups/my'),
-        api.get('/contributions/my'),
-      ]);
-      setGroups(groupsRes.data.data);
-      setContributions(contribsRes.data.data || []);
-    } catch {
-      setError('Failed to load data.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleJoinGroup = async (e) => {
     e.preventDefault();
     setJoinLoading(true);

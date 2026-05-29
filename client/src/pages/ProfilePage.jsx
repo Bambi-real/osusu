@@ -8,7 +8,7 @@ import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 
 export default function ProfilePage() {
-  const { user, setLoggedInUser, refreshUser } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');

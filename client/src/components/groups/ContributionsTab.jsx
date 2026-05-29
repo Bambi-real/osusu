@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import api from '../../api/axios';
 import { formatCurrency, formatDate } from '../../utils/helpers';
@@ -48,25 +48,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    fetchCycles().then(() => {
-      if (cancelled) return;
-    });
-    return () => { cancelled = true; };
-  }, [groupId]);
-
-  useEffect(() => {
-    let cancelled = false;
-    if (selectedCycleId) {
-      fetchCycleDetail(selectedCycleId).then(() => {
-        if (cancelled) return;
-      });
-    }
-    return () => { cancelled = true; };
-  }, [selectedCycleId]);
-
-  const fetchCycles = async () => {
+  const fetchCycles = useCallback(async () => {
     try {
       const res = await api.get(`/cycles/group/${groupId}`);
       setCycles(res.data.data);
@@ -79,7 +61,11 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
     } finally {
       setLoading(false);
     }
-  };
+  }, [groupId]);
+
+  useEffect(() => {
+    fetchCycles();
+  }, [fetchCycles]);
 
   const fetchCycleDetail = async (cycleId) => {
     try {
@@ -126,7 +112,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
       if (nextCollecting) {
         setSelectedCycleId(nextCollecting.id);
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to complete cycle.');
     } finally {
       setActionLoading(false);
