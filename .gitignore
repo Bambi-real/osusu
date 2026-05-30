@@ -1,23 +1,40 @@
 # Dependencies
 node_modules/
+**/node_modules/
 
 # Environment files — NEVER commit these
 .env
 .env.local
+.env.development
+.env.production
 .env.*.local
 *.local
 
 # Build output
 client/dist/
+client/build/
+
+# Logs
+*.log
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+logs/
 
 # Editor
-.idea/
 .vscode/
+.idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Project task files
+# Testing
+coverage/
+
+# Misc
 OPENCODE_TASK.md
 CLAUDE_TASK.md
+*.md.bak

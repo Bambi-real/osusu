@@ -525,7 +525,11 @@ Set environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `PORT`, 
 2. Root directory: `client`
 3. Environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`
 
-See [Deployment Guide](./docs/deployment-guide.md) for detailed instructions.
+See `DEPLOYMENT.md` for full deployment instructions.
+
+**Short version:**
+- Backend → Render (root: `server`, start: `node server.js`)
+- Frontend → Vercel (root: `client`, framework: Vite)
 
 ---
 
