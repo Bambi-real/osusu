@@ -31,7 +31,8 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS blocked: ${origin}`));
+    console.warn(`[CORS] Blocked origin: ${origin} (CLIENT_URL=${process.env.CLIENT_URL})`);
+    callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -84,13 +85,6 @@ app.use((err, req, res, next) => {
     method:    req.method,
     timestamp: new Date().toISOString(),
   });
-
-  if (err.message?.startsWith('CORS blocked')) {
-    return res.status(403).json({
-      success: false,
-      error: { message: 'Request blocked by CORS policy.' },
-    });
-  }
 
   const statusCode = err.status || err.statusCode || 500;
   return res.status(statusCode).json({
