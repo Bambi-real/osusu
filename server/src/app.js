@@ -64,8 +64,8 @@ app.use('/api/groups',        groupRoutes);
 app.use('/api/contributions', contributionRoutes);
 app.use('/api/cycles',        cycleRoutes);
 
-// 404 handler
-app.use('/*', (req, res) => {
+// 404 handler — catch-all for unmatched routes
+app.use((req, res) => {
   res.status(404).json({
     success: false,
     error: {
