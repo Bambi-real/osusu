@@ -19,6 +19,8 @@ app.use(helmet({
 // CORS — only allow our Vercel frontend
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  'https://www.osusu.tech',
+  'https://osusu.tech',
   'http://localhost:5173',
   'http://localhost:3000',
 ].filter(Boolean);
