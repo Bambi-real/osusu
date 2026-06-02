@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +8,7 @@ import Button from '../components/common/Button';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setLoggedInUser } = useAuth();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -62,7 +63,7 @@ export default function LoginPage() {
       
       await supabase.auth.setSession({ access_token, refresh_token });
       setLoggedInUser(user);
-      navigate('/dashboard');
+      navigate(location.state?.from?.pathname || '/dashboard');
     } catch (err) {
       const status = err.response?.status;
       const msg    = err.response?.data?.error?.message;
@@ -83,12 +84,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex page-enter">
       {/* Left panel — desktop only */}
       <div className="hidden lg:flex lg:w-1/2 bg-green-600 flex-col justify-between p-12">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-green-600">
-            <svg viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+            <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" className="w-7 h-7">
               <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
               <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
               <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
@@ -123,12 +124,12 @@ export default function LoginPage() {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-8 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center text-white">
-              <svg viewBox="0 0 40 40" fill="none" className="w-5 h-5">
+              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" className="w-5 h-5">
                 <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
                 <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
                 <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
@@ -160,11 +161,12 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(null); clearErrors(); }}
               error={emailError}
+              autoComplete="email"
             />
             
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <Link
@@ -175,29 +177,32 @@ export default function LoginPage() {
               </div>
               <div className="relative">
                 <input
+                  id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(null); clearErrors(); }}
+                  autoComplete="current-password"
                   className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${passwordError ? 'border-red-400' : 'border-gray-300'}`}
                 />
               <button
                 type="button"
-                className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 focus:outline-none"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                  <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                 ) : (
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  <svg aria-hidden="true" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                 )}
               </button>
             </div>
             </div>
             
-            {error && <p className="text-xs text-red-600 flex items-center gap-1"><span>⚠</span> {error}</p>}
+            {error && <p className="text-xs text-red-600 flex items-center gap-1" role="alert"><span>⚠</span> {error}</p>}
             
             <Button type="submit" loading={loading} className="w-full">
               Sign in

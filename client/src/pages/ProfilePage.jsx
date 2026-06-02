@@ -80,8 +80,8 @@ export default function ProfilePage() {
     : new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
   return (
-    <PageWrapper>
-      <div className="page-enter max-w-4xl mx-auto space-y-8">
+    <PageWrapper size="narrow">
+      <div className="page-enter max-w-4xl mx-auto space-y-6 sm:space-y-8">
         <BackButton fallback="/dashboard" />
         <Breadcrumb items={[
           { label: 'Dashboard', href: '/dashboard' },
@@ -90,7 +90,7 @@ export default function ProfilePage() {
         <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
 
         {/* Profile header card */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 mb-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             <div className="w-20 h-20 bg-green-600 rounded-2xl flex items-center justify-center text-2xl font-black text-white flex-shrink-0">
               {user?.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
@@ -127,6 +127,7 @@ export default function ProfilePage() {
                     if (profileMsg) setProfileMsg(null);
                   }}
                   required
+                  autoComplete="name"
                 />
 
                 <div>
@@ -145,13 +146,14 @@ export default function ProfilePage() {
                       }}
                       required
                       placeholder="3XXXXXX"
+                      autoComplete="tel"
                       className="flex-1 block w-full px-3 py-2.5 text-sm border-none focus:ring-0 text-gray-900"
                     />
                   </div>
                 </div>
 
                 {profileMsg && (
-                  <div className={`text-sm font-medium p-3 rounded-lg border ${profileMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                  <div className={`text-sm font-medium p-3 rounded-lg border ${profileMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`} role={profileMsg.type === 'error' ? 'alert' : 'status'}>
                     {profileMsg.text}
                   </div>
                 )}
@@ -162,6 +164,8 @@ export default function ProfilePage() {
                     variant="primary"
                     loading={profileLoading}
                     disabled={!isDirty || profileLoading}
+                    title={!isDirty ? 'No changes to save' : ''}
+                    className="disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {saveState === 'success' ? '✓ Saved' : 'Save Changes'}
                   </Button>
@@ -184,11 +188,12 @@ export default function ProfilePage() {
                 required
                 minLength={8}
                 placeholder="••••••••"
+                autoComplete="new-password"
               />
               <p className="text-xs text-gray-500">Password must be at least 8 characters long.</p>
 
               {passwordMsg && (
-                <div className={`text-sm font-medium p-3 rounded-lg border ${passwordMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+                <div className={`text-sm font-medium p-3 rounded-lg border ${passwordMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`} role={passwordMsg.type === 'error' ? 'alert' : 'status'}>
                   {passwordMsg.text}
                 </div>
               )}

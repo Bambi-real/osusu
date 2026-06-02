@@ -6,7 +6,7 @@ function HeroMockup() {
   return (
     <div className="relative">
       <div className="absolute inset-0 translate-x-4 translate-y-4 bg-green-200 rounded-2xl" />
-      <div className="relative bg-white rounded-2xl shadow-2xl p-6 w-80 border-t-4 border-t-green-500">
+      <div className="relative bg-white rounded-2xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.15)] p-6 w-80 border-t-4 border-t-green-500">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs bg-green-100 text-green-700 rounded-full px-3 py-1 font-medium">
             Active
@@ -78,6 +78,15 @@ export default function LandingPage() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const featureColors = [
+    'bg-green-100 text-green-600',
+    'bg-blue-100 text-blue-600',
+    'bg-purple-100 text-purple-600',
+    'bg-amber-100 text-amber-600',
+    'bg-rose-100 text-rose-600',
+    'bg-teal-100 text-teal-600',
+  ];
+
   const features = [
     {
       title: 'Contribution Tracking',
@@ -112,9 +121,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <style>{`html { scroll-behavior: smooth; }`}</style>
-
+    <div className="min-h-screen bg-white page-enter">
       {/* Navbar */}
       <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,7 +129,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white">
-                  <svg viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+                  <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" className="w-7 h-7">
                     <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
                     <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
                     <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
@@ -178,7 +185,7 @@ export default function LandingPage() {
               <span>Built for The Gambia</span>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
               Your osusu group,{' '}
               <span className="text-green-600">organised.</span>
             </h1>
@@ -238,7 +245,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-sm font-semibold tracking-widest text-green-600 uppercase mb-4">How It Works</p>
+            <p className="text-xs font-bold text-green-600 uppercase tracking-[0.15em] mb-3">How It Works</p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">From signup to your first payout in minutes</h2>
             <p className="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">Osusu handles the admin so your group can focus on saving.</p>
           </div>
@@ -249,7 +256,7 @@ export default function LandingPage() {
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
                 <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 1</p>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Create Your Group</h3>
@@ -260,7 +267,7 @@ export default function LandingPage() {
 
               <div className="text-center">
                 <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
                 <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 2</p>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Members Join</h3>
@@ -271,7 +278,7 @@ export default function LandingPage() {
 
               <div className="text-center">
                 <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                  <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                 </div>
                 <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 3</p>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Track & Pay Out</h3>
@@ -288,15 +295,15 @@ export default function LandingPage() {
       <section id="features" className="py-24 px-4 bg-green-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-sm font-semibold tracking-widest text-green-600 uppercase mb-4">Features</p>
+            <p className="text-xs font-bold text-green-600 uppercase tracking-[0.15em] mb-3">Features</p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">Everything your osusu group needs</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((feature, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${featureColors[i]}`}>
+                  <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={feature.path} />
                   </svg>
                 </div>
@@ -312,7 +319,7 @@ export default function LandingPage() {
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-sm font-semibold tracking-widest text-green-600 uppercase mb-4">Our Mission</p>
+            <p className="text-xs font-bold text-green-600 uppercase tracking-[0.15em] mb-3">Our Mission</p>
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">Technology for a tradition that works</h2>
           </div>
 

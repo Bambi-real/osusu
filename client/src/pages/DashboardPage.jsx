@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +8,7 @@ import GroupCard from '../components/groups/GroupCard';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import Modal from '../components/common/Modal';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import DashboardSkeleton from '../components/skeletons/DashboardSkeleton';
 import { formatCurrency, formatRelativeDate } from '../utils/helpers';
 
 export default function DashboardPage() {
@@ -25,30 +25,36 @@ export default function DashboardPage() {
   const [joinLoading, setJoinLoading] = useState(false);
   const [joinError, setJoinError] = useState(null);
 
+  const loadData = useCallback(async () => {
+    try {
+      const [groupsRes, contribsRes] = await Promise.all([
+        api.get('/groups/my'),
+        api.get('/contributions/my'),
+      ]);
+      setGroups(groupsRes.data.data);
+      setContributions(contribsRes.data.data || []);
+      setError(null);
+    } catch {
+      setError('Failed to load data.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    let cancelled = false;
     document.title = 'Dashboard — Osusu';
 
-    const loadData = async () => {
-      try {
-        const [groupsRes, contribsRes] = await Promise.all([
-          api.get('/groups/my'),
-          api.get('/contributions/my'),
-        ]);
-        if (!cancelled) {
-          setGroups(groupsRes.data.data);
-          setContributions(contribsRes.data.data || []);
-        }
-      } catch {
-        if (!cancelled) setError('Failed to load data.');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
     loadData();
-    return () => { cancelled = true; };
-  }, []);
+
+    const handleVisibility = () => {
+      if (!document.hidden) loadData();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [loadData]);
 
   const handleJoinGroup = async (e) => {
     e.preventDefault();
@@ -80,25 +86,20 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <PageWrapper>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center space-y-3">
-            <LoadingSpinner size="lg" />
-            <p className="text-sm text-gray-400">Loading...</p>
-          </div>
-        </div>
+      <PageWrapper size="wide">
+        <DashboardSkeleton />
       </PageWrapper>
     );
   }
 
   if (error) {
     return (
-      <PageWrapper>
+      <PageWrapper size="wide">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
           <span className="text-4xl mb-4">⚠️</span>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-sm">{error}</p>
-          <Button variant="secondary" onClick={() => window.location.reload()}>Try Again</Button>
+          <Button variant="secondary" onClick={loadData}>Try Again</Button>
         </div>
       </PageWrapper>
     );
@@ -122,10 +123,10 @@ export default function DashboardPage() {
     : `You are part of ${activeGroups.length} groups. Keep growing your savings together!`;
 
   return (
-    <PageWrapper>
+    <PageWrapper size="wide">
       <div className="page-enter space-y-8">
         {/* Hero Banner */}
-        <div className="bg-gradient-to-r from-green-600 via-green-600 to-green-700 rounded-[32px] p-8 sm:p-12 shadow-green-600/20 shadow-2xl relative overflow-hidden">
+        <div className="bg-gradient-to-r from-green-600 via-green-600 to-green-700 rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 lg:p-12 shadow-green-600/20 shadow-2xl relative overflow-hidden">
           <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -151,54 +152,64 @@ export default function DashboardPage() {
               >
                 Join
               </Button>
-              <Link to="/groups/new">
-                <Button variant="secondary" className="bg-white text-green-700 font-semibold hover:bg-green-50 px-5 py-2.5 rounded-full border border-white/30 w-full sm:w-auto">
-                  + New Group
-                </Button>
-              </Link>
+              <button
+                onClick={() => navigate('/groups/new')}
+                className="inline-flex items-center gap-2 bg-white text-green-700 font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-green-50 active:bg-green-100 transition-all duration-150 shadow-sm border border-white/20"
+              >
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                </svg>
+                New Group
+              </button>
             </div>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-full">
-            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center text-green-600 mb-3">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-stretch">
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm h-full">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-green-50 flex items-center justify-center text-green-600 mb-2 sm:mb-3">
+              <svg aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{activeGroups.length}</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">{activeGroups.length}</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Total Groups</p>
             <p className="text-xs text-gray-400 mt-0.5">{groups.length} total</p>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-full">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 mb-3">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm h-full">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 mb-2 sm:mb-3">
+              <svg aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{statsActiveGroups.length}</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">{statsActiveGroups.length}</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Active Groups</p>
             <p className="text-xs text-gray-400 mt-0.5">{statsActiveGroups.length > 0 ? `${statsActiveGroups.length} collecting` : 'None active'}</p>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-full">
-            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 mb-3">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm h-full">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 mb-2 sm:mb-3">
+              <svg aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <div>
-              <p className="text-xl font-bold text-gray-900 truncate" title={nextPayoutGroup?.name}>
-                {nextPayoutGroup?.name ?? '—'}
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {nextPayoutDueDate
-                  ? formatRelativeDate(nextPayoutDueDate)
-                  : 'No upcoming payout'}
-              </p>
+            <div className="min-w-0">
+              {nextPayoutGroup ? (
+                <>
+                  <p className="text-base sm:text-xl font-bold text-gray-900 truncate" title={nextPayoutGroup.name}>
+                    {nextPayoutGroup.name}
+                  </p>
+                  <p className="text-xs text-green-600 font-medium mt-0.5">
+                    {nextPayoutDueDate ? formatRelativeDate(nextPayoutDueDate) : '—'}
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-gray-400 italic">
+                  No upcoming payouts
+                </p>
+              )}
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Next Payout</p>
             <p className="text-xs text-gray-400 mt-0.5">
@@ -206,13 +217,13 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-full">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 mb-3">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-100 shadow-sm h-full">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 mb-2 sm:mb-3">
+              <svg aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08-.402-2.599-1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="text-2xl font-bold text-gray-900 whitespace-nowrap">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 whitespace-nowrap">
               {formatCurrency(totalSaved)}
             </p>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Total Saved</p>
@@ -245,12 +256,13 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div className={`grid gap-5 ${activeGroups.length === 1 ? 'grid-cols-1 max-w-sm' : activeGroups.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+            <div className={`grid gap-5 items-stretch ${activeGroups.length === 1 ? 'grid-cols-1 max-w-sm' : activeGroups.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {activeGroups.map(group => (
                 <GroupCard
                   key={group.id}
                   group={group}
                   isOrganiser={group.organiser_id === user?.id}
+                  className="h-full"
                 />
               ))}
             </div>
@@ -264,7 +276,7 @@ export default function DashboardPage() {
               onClick={() => setShowArchived(!showArchived)}
               className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <svg
+              <svg aria-hidden="true"
                 className={`w-4 h-4 transition-transform ${showArchived ? 'rotate-90' : ''}`}
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
               >
@@ -297,7 +309,7 @@ export default function DashboardPage() {
             <form onSubmit={handleJoinGroup} className="space-y-6">
               <div className="bg-green-50 p-4 rounded-xl border border-green-100 flex gap-4">
                 <div className="bg-white w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm">
-                  <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg aria-hidden="true" className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
@@ -314,7 +326,7 @@ export default function DashboardPage() {
                 placeholder="e.g. 123e4567-e89b..."
                 required
               />
-              {joinError && <div className="text-rose-500 text-sm font-bold">{joinError}</div>}
+              {joinError && <div className="text-rose-500 text-sm font-bold" role="alert">{joinError}</div>}
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <Button variant="ghost" onClick={() => setIsJoinModalOpen(false)} type="button">

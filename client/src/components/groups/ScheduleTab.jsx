@@ -39,12 +39,12 @@ export default function ScheduleTab({ groupId }) {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Cycle</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Due Date</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Recipient</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pot Size</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Collected</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-4 sm:px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Cycle</th>
+              <th className="px-4 sm:px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Due Date</th>
+              <th className="px-4 sm:px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Recipient</th>
+              <th className="hidden sm:table-cell px-4 sm:px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pot Size</th>
+              <th className="hidden sm:table-cell px-4 sm:px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Collected</th>
+              <th className="px-4 sm:px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -64,31 +64,31 @@ export default function ScheduleTab({ groupId }) {
 
               return (
                 <tr key={cycle.id} className={rowClass}>
-                  <td className="px-6 py-5 whitespace-nowrap">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold ${isCollecting ? 'bg-amber-100 text-amber-800' : isPaidOut ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}`}>
+                      <div className={`flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full flex items-center justify-center text-xs font-bold ${isCollecting ? 'bg-amber-100 text-amber-800' : isPaidOut ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}`}>
                         {cycle.cycle_number}
                       </div>
                       {isCollecting && <span className="ml-2 text-xs font-bold text-amber-600 uppercase tracking-wide">Current</span>}
                     </div>
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 font-medium">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap text-sm text-gray-600 font-medium">
                     {formatDateWithDay(cycle.due_date)}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs mr-3">
+                      <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xs mr-2 sm:mr-3">
                         {initials}
                       </div>
-                      <div>
-                        <div className="text-sm font-bold text-gray-900">{cycle.payoutUser.full_name}</div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-bold text-gray-900 truncate max-w-[80px] sm:max-w-none">{cycle.payoutUser.full_name}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm font-bold text-gray-900">
+                  <td className="hidden sm:table-cell px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap text-sm font-bold text-gray-900">
                     {formatCurrency(cycle.total_expected)}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm">
+                  <td className="hidden sm:table-cell px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap text-sm">
                     <p className={`text-sm font-semibold ${cycle.total_collected === cycle.total_expected ? 'text-green-700' : 'text-gray-900'}`}>
                       {formatCurrency(cycle.total_collected)}
                     </p>
@@ -96,7 +96,7 @@ export default function ScheduleTab({ groupId }) {
                       of {formatCurrency(cycle.total_expected)}
                     </p>
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       {cycle.status === 'COLLECTING' && (
                         <span className="relative flex h-2 w-2">

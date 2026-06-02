@@ -92,6 +92,16 @@ exports.getGroupContributions = async (req, res, next) => {
   try {
     const { groupId } = req.params;
 
+    const { data: isMember } = await supabaseAdmin
+      .from('group_members')
+      .select('id')
+      .eq('group_id', groupId)
+      .eq('user_id', req.user.id)
+      .single();
+    if (!isMember) {
+      return res.status(403).json({ success: false, error: { message: 'Not a member of this group' } });
+    }
+
     const { data: contributions, error } = await supabaseAdmin
       .from('contributions')
       .select('*, profiles:user_id(id, full_name, phone)')

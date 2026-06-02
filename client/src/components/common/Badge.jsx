@@ -1,36 +1,35 @@
-export default function Badge({ status }) {
-  const colors = {
-    FORMING: 'bg-gray-100 text-gray-800',
-    ACTIVE: 'bg-emerald-100 text-emerald-800',
-    PAID: 'bg-emerald-100 text-emerald-800',
-    PAID_OUT: 'bg-emerald-100 text-emerald-800',
-    COLLECTING: 'bg-amber-100 text-amber-800',
-    PENDING: 'bg-gray-100 text-gray-800',
-    UNPAID: 'bg-gray-100 text-gray-800',
-    COMPLETED: 'bg-blue-100 text-blue-800',
-    CANCELLED: 'bg-red-100 text-red-600',
-    DAILY: 'bg-purple-100 text-purple-700',
-    WEEKLY: 'bg-blue-100 text-blue-700',
-    MONTHLY: 'bg-green-100 text-green-700'
-  };
+const config = {
+  // Group statuses
+  FORMING:    { bg: 'bg-gray-100',   text: 'text-gray-600',  label: 'Forming'    },
+  ACTIVE:     { bg: 'bg-green-100',  text: 'text-green-700', label: 'Active'     },
+  COMPLETED:  { bg: 'bg-blue-100',   text: 'text-blue-700',  label: 'Completed'  },
+  CANCELLED:  { bg: 'bg-red-100',    text: 'text-red-600',   label: 'Cancelled'  },
 
-  const statusLabels = {
-    FORMING: 'Forming',
-    ACTIVE: 'Active',
-    PAID: 'Paid',
-    PAID_OUT: 'Paid Out',
-    COLLECTING: 'Collecting',
-    PENDING: 'Pending',
-    UNPAID: 'Unpaid',
-    COMPLETED: 'Completed',
-    CANCELLED: 'Cancelled',
-  };
+  // Cycle statuses
+  PENDING:    { bg: 'bg-gray-100',   text: 'text-gray-500',  label: 'Pending'    },
+  COLLECTING: { bg: 'bg-amber-100',  text: 'text-amber-700', label: 'Collecting' },
+  PAID_OUT:   { bg: 'bg-green-100',  text: 'text-green-700', label: 'Paid Out'   },
 
-  const className = colors[status] || 'bg-gray-100 text-gray-800';
-  const label = statusLabels[status] || status;
+  // Contribution statuses
+  PAID:       { bg: 'bg-green-100',  text: 'text-green-700', label: 'Paid'       },
+  UNPAID:     { bg: 'bg-gray-100',   text: 'text-gray-500',  label: 'Unpaid'     },
+
+  // Frequency
+  DAILY:      { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Daily'     },
+  WEEKLY:     { bg: 'bg-blue-100',   text: 'text-blue-700',  label: 'Weekly'     },
+  MONTHLY:    { bg: 'bg-indigo-100', text: 'text-indigo-700', label: 'Monthly'   },
+
+  // Role
+  ORGANISER:  { bg: 'bg-green-50',   text: 'text-green-700', label: 'Organiser'  },
+  MEMBER:     { bg: 'bg-gray-100',   text: 'text-gray-500',  label: 'Member'     },
+};
+
+export default function Badge({ status, className = '' }) {
+  const { bg, text, label } = config[status] ||
+    { bg: 'bg-gray-100', text: 'text-gray-500', label: status };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${className}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${bg} ${text} ${className}`}>
       {label}
     </span>
   );

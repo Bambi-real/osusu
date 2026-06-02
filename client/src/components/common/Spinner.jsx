@@ -1,6 +1,7 @@
 export default function Spinner({ fullPage }) {
   const spinner = (
-    <div className="flex flex-col items-center justify-center space-y-4">
+    <div className="flex flex-col items-center justify-center space-y-4" role="status">
+      <span className="sr-only">Loading...</span>
       {fullPage && (
         <div className="flex items-center justify-center gap-2 mb-4 animate-pulse">
           <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white">

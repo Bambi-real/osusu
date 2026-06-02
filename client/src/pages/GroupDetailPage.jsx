@@ -8,9 +8,10 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import Breadcrumb from '../components/common/Breadcrumb';
 import Modal from '../components/common/Modal';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import GroupDetailSkeleton from '../components/skeletons/GroupDetailSkeleton';
 import { formatCurrency, formatDate, formatRelativeDate } from '../utils/helpers';
 import { deleteGroup, cancelGroup } from '../api/groups';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import ScheduleTab from '../components/groups/ScheduleTab';
 import ContributionsTab from '../components/groups/ContributionsTab';
 
@@ -69,7 +70,7 @@ export default function GroupDetailPage() {
       await fetchGroupData();
       setActiveTab('schedule');
     } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to start group.');
+      toast.error(err.response?.data?.error?.message || 'Failed to start group.');
     } finally {
       setStartLoading(false);
     }
@@ -134,24 +135,19 @@ export default function GroupDetailPage() {
 
   if (loading) {
     return (
-      <PageWrapper>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center space-y-3">
-            <LoadingSpinner size="lg" />
-            <p className="text-sm text-gray-400">Loading...</p>
-          </div>
-        </div>
+      <PageWrapper size="wide">
+        <GroupDetailSkeleton />
       </PageWrapper>
     );
   }
 
   if (error || !data) {
     return (
-      <PageWrapper>
+      <PageWrapper size="wide">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
           <span className="text-4xl mb-4">⚠️</span>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h2>
-          <p className="text-sm text-gray-400 mb-6 max-w-sm">{error || 'Group not found.'}</p>
+          <p className="text-sm text-gray-400 mb-6 max-w-sm" role="alert">{error || 'Group not found.'}</p>
           <Button variant="secondary" onClick={() => navigate('/dashboard')}>
             Back to Dashboard
           </Button>
@@ -170,7 +166,7 @@ export default function GroupDetailPage() {
   ];
 
   return (
-    <PageWrapper>
+    <PageWrapper size="wide">
       <div className="page-enter space-y-6">
         <Breadcrumb items={[
           { label: 'Dashboard', href: '/dashboard' },
@@ -185,8 +181,8 @@ export default function GroupDetailPage() {
               <Badge status={group.status} />
             </div>
 
-            <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 flex-wrap">
-              <span>{frequencyLabel[group.frequency]} · {formatCurrency(group.contribution_amount)}</span>
+            <div className="flex items-center gap-2 sm:gap-4 mt-2 text-sm text-gray-500 flex-wrap">
+              <span className="whitespace-nowrap">{frequencyLabel[group.frequency]} · {formatCurrency(group.contribution_amount)}</span>
               <span>{members.length} of {group.max_members} members</span>
               <span>Started {formatDate(group.start_date)}</span>
               <span>
@@ -204,11 +200,12 @@ export default function GroupDetailPage() {
           </div>
 
           {isOrganiser && group.status === 'FORMING' && (
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-shrink-0">
-              <span className="text-xs text-gray-400 font-medium uppercase tracking-wide">INVITE CODE</span>
-              <code className="text-sm font-mono font-semibold text-gray-800">{group.invite_code}</code>
+            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-shrink-0 min-w-0 overflow-hidden max-w-full sm:max-w-none self-start">
+              <span className="text-xs text-gray-400 font-medium uppercase tracking-wide flex-shrink-0">INVITE CODE</span>
+              <code className="text-sm font-mono font-semibold text-gray-800 truncate max-w-[120px] sm:max-w-none">{group.invite_code}</code>
               <button
                 onClick={handleCopyCode}
+                aria-label="Copy invite code"
                 className="text-green-600 hover:text-green-700 text-xs font-medium whitespace-nowrap"
               >
                 {copied ? 'Copied ✓' : 'Copy'}
@@ -278,7 +275,10 @@ export default function GroupDetailPage() {
 
             {/* Members List */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Members & Payout Order</h2>
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="text-base font-semibold text-gray-900">Members</h2>
+                <span className="text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 font-medium">{members.length}</span>
+              </div>
               {members.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center border border-dashed border-gray-200 rounded-xl">
                   <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mb-3">
@@ -343,7 +343,7 @@ export default function GroupDetailPage() {
                       onClick={() => setShowDeleteModal(true)}
                       className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50 transition-all"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                       Delete Group
@@ -354,7 +354,7 @@ export default function GroupDetailPage() {
                       onClick={() => setShowCancelModal(true)}
                       className="flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-200 text-amber-700 text-sm font-medium hover:bg-amber-50 transition-all"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                       </svg>
                       Archive Group

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PageWrapper from '../components/layout/PageWrapper';
 import api from '../api/axios';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+
 import BackButton from '../components/common/BackButton';
 import Breadcrumb from '../components/common/Breadcrumb';
 import { formatCurrency, formatDate } from '../utils/helpers';
@@ -12,24 +12,32 @@ export default function MyContributionsPage() {
   const [error, setError] = useState(null);
   const [expandedGroups, setExpandedGroups] = useState({});
 
+  const loadData = useCallback(async () => {
+    try {
+      const res = await api.get('/contributions/my');
+      setContributions(res.data.data || []);
+      setError(null);
+    } catch {
+      setError('Failed to load contributions.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    let cancelled = false;
     document.title = 'My Contribution History — Osusu';
 
-    const loadData = async () => {
-      try {
-        const res = await api.get('/contributions/my');
-        if (!cancelled) setContributions(res.data.data || []);
-      } catch {
-        if (!cancelled) setError('Failed to load contributions.');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
     loadData();
-    return () => { cancelled = true; };
-  }, []);
+
+    const handleVisibility = () => {
+      if (!document.hidden) loadData();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [loadData]);
 
   const totalContributed = contributions.reduce((sum, c) => sum + Number(c.amount || 0), 0);
 
@@ -49,11 +57,17 @@ export default function MyContributionsPage() {
   if (loading) {
     return (
       <PageWrapper>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center space-y-3">
-            <LoadingSpinner size="lg" />
-            <p className="text-sm text-gray-400">Loading...</p>
-          </div>
+        <div className="space-y-4 pt-8">
+          <div className="w-48 h-8 bg-gray-200 rounded-lg animate-pulse" />
+          {[...Array(3)].map((_, i) => (
+            <div key={i}
+                 className="bg-white rounded-xl border
+                            border-gray-200 p-4 space-y-3">
+              <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-full bg-gray-100 rounded animate-pulse" />
+              <div className="h-4 w-3/4 bg-gray-100 rounded animate-pulse" />
+            </div>
+          ))}
         </div>
       </PageWrapper>
     );
@@ -66,7 +80,7 @@ export default function MyContributionsPage() {
           <span className="text-4xl mb-4">⚠️</span>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h2>
           <p className="text-sm text-gray-400 mb-6 max-w-sm">{error}</p>
-          <button onClick={() => window.location.reload()} className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-4 py-2.5 rounded-lg transition-all">
+          <button onClick={loadData} className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-4 py-2.5 rounded-lg transition-all">
             Try Again
           </button>
         </div>
@@ -86,11 +100,25 @@ export default function MyContributionsPage() {
           <h1 className="text-2xl font-bold text-gray-900">My Contribution History</h1>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Total Contributed</p>
-          <p className="text-3xl font-bold text-green-600 mt-1 whitespace-nowrap">
-            {formatCurrency(totalContributed)}
-          </p>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                Total Contributed
+              </p>
+              <p className="text-3xl font-bold text-green-700 whitespace-nowrap">
+                {formatCurrency(totalContributed)}
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                Across {Object.keys(grouped).length} group{Object.keys(grouped).length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center">
+              <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {Object.keys(grouped).length === 0 ? (
@@ -118,7 +146,7 @@ export default function MyContributionsPage() {
                     className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <svg
+                      <svg aria-hidden="true"
                         className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-90' : ''}`}
                         fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
                       >
@@ -140,7 +168,7 @@ export default function MyContributionsPage() {
                             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Cycle</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
                             <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Amount</th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Note</th>
+                            <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Note</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -155,7 +183,7 @@ export default function MyContributionsPage() {
                               <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-700 text-right">
                                 {formatCurrency(c.amount)}
                               </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                              <td className="hidden sm:table-cell px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                                 {c.note || '—'}
                               </td>
                             </tr>

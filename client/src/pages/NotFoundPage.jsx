@@ -11,7 +11,7 @@ export default function NotFoundPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 bg-gray-50 page-enter">
       <p className="text-8xl font-black text-green-100 select-none mb-2">
         404
       </p>
@@ -30,7 +30,7 @@ export default function NotFoundPage() {
         <button
           onClick={() => navigate(-1)}
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Go back

@@ -9,7 +9,7 @@ if (!apiUrl) {
   );
 }
 
-const api = axios.create({ baseURL: apiUrl });
+const api = axios.create({ baseURL: apiUrl, timeout: 15000 });
 
 api.interceptors.request.use(
   async (config) => {
@@ -42,6 +42,13 @@ api.interceptors.response.use(
       '/forgot-password', '/reset-password'
     ];
     const isOnPublicPage = publicPaths.includes(window.location.pathname);
+
+    if (!error.response) {
+      const isBrowserOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+      error.message = isBrowserOffline
+        ? 'You appear to be offline. Please check your internet connection.'
+        : 'Request timed out or network error. Please try again.';
+    }
 
     if (error.response?.status === 401 && !isOnPublicPage) {
       const { data: { session } } = await supabase.auth.getSession();

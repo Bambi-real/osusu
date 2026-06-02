@@ -131,7 +131,6 @@ exports.getGroupById = async (req, res, next) => {
         user: {
             id: m.profiles.id,
             fullName: m.profiles.full_name,
-            email: m.profiles.email,
             phone: m.profiles.phone
         }
     }));
@@ -440,11 +439,19 @@ exports.startGroup = async (req, res, next) => {
 
 exports.getGroupSchedule = async (req, res, next) => {
    try {
-       const { id } = req.params;
-       
-       // Note: Spec says Yes + Member. 
-       
-       const { data: cycles, error } = await supabaseAdmin
+        const { id } = req.params;
+
+        const { data: isMember } = await supabaseAdmin
+          .from('group_members')
+          .select('id')
+          .eq('group_id', id)
+          .eq('user_id', req.user.id)
+          .single();
+        if (!isMember) {
+          return res.status(403).json({ success: false, error: { message: 'Not a member of this group' } });
+        }
+
+        const { data: cycles, error } = await supabaseAdmin
         .from('cycles')
         .select('*, profiles:payout_user_id(id, full_name, phone)')
         .eq('group_id', id)
@@ -472,13 +479,23 @@ exports.getGroupSchedule = async (req, res, next) => {
 
 exports.getGroupMembers = async (req, res, next) => {
    try {
-       const { id } = req.params;
-       
-       const { data: membersData, error } = await supabaseAdmin
-        .from('group_members')
-        .select('*, profiles(id, full_name, phone)')
-        .eq('group_id', id)
-        .order('payout_order', { ascending: true });
+        const { id } = req.params;
+
+        const { data: isMember } = await supabaseAdmin
+          .from('group_members')
+          .select('id')
+          .eq('group_id', id)
+          .eq('user_id', req.user.id)
+          .single();
+        if (!isMember) {
+          return res.status(403).json({ success: false, error: { message: 'Not a member of this group' } });
+        }
+
+        const { data: membersData, error } = await supabaseAdmin
+         .from('group_members')
+         .select('*, profiles(id, full_name, phone)')
+         .eq('group_id', id)
+         .order('payout_order', { ascending: true });
         
        if (error) {
            return res.status(500).json({ success: false, error: { message: 'Failed to get members' } });

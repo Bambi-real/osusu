@@ -31,3 +31,8 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('[SERVER] Unhandled Rejection at:', promise,
                 'reason:', reason);
 });
+
+process.on('uncaughtException', (err) => {
+  console.error('[SERVER] Uncaught Exception:', err);
+  server.close(() => process.exit(1));
+});

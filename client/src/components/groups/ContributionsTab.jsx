@@ -15,7 +15,7 @@ function CircularProgress({ value, max }) {
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <svg width="100" height="100" className="-rotate-90">
+    <svg aria-hidden="true" width="100" height="100" className="-rotate-90">
       <circle
         cx="50" cy="50" r={radius}
         fill="none"
@@ -47,6 +47,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [confirmCompleteOpen, setConfirmCompleteOpen] = useState(false);
 
   const fetchCycles = useCallback(async () => {
     try {
@@ -97,17 +98,19 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
       setSelectedMember(null);
       await fetchCycleDetail(selectedCycleId);
     } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to record payment');
+      toast.error(err.response?.data?.error?.message || 'Failed to record payment');
     } finally {
       setActionLoading(false);
     }
   };
 
+  const handleConfirmComplete = () => {
+    setConfirmCompleteOpen(true);
+  };
+
   const handleCompleteCycle = async () => {
-    if (!window.confirm('Are you sure you want to mark this cycle as complete? The payout will be finalised.')) {
-      return;
-    }
     setActionLoading(true);
+    setConfirmCompleteOpen(false);
     try {
       await api.put(`/cycles/${selectedCycleId}/complete`);
       toast.success('Cycle completed!');
@@ -125,18 +128,8 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
     }
   };
 
-  const handleDeleteContribution = async (contributionId) => {
-    if (!window.confirm('Are you sure you want to delete this contribution?')) return;
-    try {
-      await api.delete(`/contributions/${contributionId}`);
-      await fetchCycleDetail(selectedCycleId);
-    } catch(err) {
-      alert(err.response?.data?.error?.message || 'Failed to delete contribution');
-    }
-  };
-
   if (loading) return <Spinner />;
-  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
+  if (error) return <div className="p-8 text-center text-red-500" role="alert">{error}</div>;
   if (cycles.length === 0) return <EmptyState title="No active cycles" description="There are currently no active cycles for this group." />;
 
   const isCycleComplete = cycleData?.status === 'PAID_OUT';
@@ -144,14 +137,14 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
   return (
     <div className="space-y-5">
       {/* Cycle selector + recipient info — full width row */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         {cycles.length <= 8 ? (
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide flex-shrink-0">
             {cycles.map(c => (
               <button
                 key={c.id}
                 onClick={() => setSelectedCycleId(c.id)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCycleId === c.id ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`flex-shrink-0 px-2.5 sm:px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCycleId === c.id ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
               >
                 Cycle {c.cycle_number}
                 {c.status === 'COLLECTING' && (
@@ -174,13 +167,13 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
           </select>
         )}
         {cycleData && (
-          <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex-shrink-0">
-            <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+          <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex-shrink-0 min-w-0">
+            <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
               {cycleData.payoutUser?.full_name?.charAt(0) || '?'}
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-xs text-gray-400">Recipient</p>
-              <p className="text-sm font-semibold text-gray-900">{cycleData.payoutUser?.full_name}</p>
+              <p className="text-sm font-semibold text-gray-900 truncate max-w-[100px] sm:max-w-none">{cycleData.payoutUser?.full_name}</p>
             </div>
           </div>
         )}
@@ -196,14 +189,14 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
             <p className="text-sm font-semibold text-gray-900 mt-3">
               {cycleData.contributions?.length || 0} of {members.length} paid
             </p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 mt-1 whitespace-nowrap">
               {formatCurrency(cycleData.total_collected)} / {formatCurrency(cycleData.total_expected)}
             </p>
-            {isOrganiser && !isCycleComplete && cycleData.status === 'COLLECTING' && (cycleData.contributions?.length || 0) === members.length && (
-              <Button variant="primary" onClick={handleCompleteCycle} loading={actionLoading} className="mt-4 w-full">
-                Finalise & Payout
-              </Button>
-            )}
+              {isOrganiser && !isCycleComplete && cycleData.status === 'COLLECTING' && (cycleData.contributions?.length || 0) === members.length && (
+                <Button variant="primary" onClick={handleConfirmComplete} loading={actionLoading} className="mt-4 w-full">
+                  Finalise & Payout
+                </Button>
+              )}
           </div>
 
           <div className="lg:col-span-2 space-y-2">
@@ -212,48 +205,40 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
               const hasPaid = !!contribution;
 
               return (
-                <div key={member.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${hasPaid ? 'bg-emerald-50' : 'bg-white hover:bg-gray-50'}`}>
-                  <div className="flex items-center gap-3">
-                    {hasPaid ? (
-                      <svg className="h-6 w-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div key={member.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${hasPaid ? 'bg-green-50 border-green-100' : 'bg-white border-gray-200 hover:bg-gray-50'}`}>
+                  {hasPaid ? (
+                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg aria-hidden="true" className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
-                    ) : (
-                      <div className="h-6 w-6 rounded-full border-2 border-gray-300"></div>
-                    )}
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{member.user.fullName}</div>
-                      <div className="text-xs text-gray-500">{hasPaid ? `Paid ${formatDate(contribution.paid_at)}` : 'Unpaid'}</div>
                     </div>
+                  ) : (
+                    <div className="w-5 h-5 bg-gray-200 rounded-full flex-shrink-0" />
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{member.user.fullName}</p>
+                    {hasPaid ? (
+                      <p className="text-xs text-green-600">Paid {formatDate(contribution.paid_at)}</p>
+                    ) : (
+                      <p className="text-xs text-gray-400">Not paid yet</p>
+                    )}
                   </div>
 
-                  {isOrganiser && !isCycleComplete && (
-                    <div>
-                      {!hasPaid ? (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedMember(member.user);
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          Mark Paid
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                          onClick={() => handleDeleteContribution(contribution.id)}
-                        >
-                          Undo
-                        </Button>
-                      )}
-                    </div>
+                  {hasPaid && (
+                    <span className="text-sm font-semibold text-green-700 whitespace-nowrap">{formatCurrency(contribution.amount)}</span>
                   )}
-                  {!isOrganiser && hasPaid && <Badge status="PAID" />}
-                  {!isOrganiser && !hasPaid && <Badge status="UNPAID" />}
+
+                  {isOrganiser && !isCycleComplete && !hasPaid && (
+                    <button
+                      onClick={() => {
+                        setSelectedMember(member.user);
+                        setIsModalOpen(true);
+                      }}
+                      className="text-xs font-semibold text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      Mark Paid
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -283,7 +268,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
               <p className="font-medium text-gray-900">{selectedMember.fullName}</p>
               <div className="mt-2 flex justify-between">
                 <span className="text-sm text-gray-500">Amount Due</span>
-                <span className="font-bold text-gray-900">{formatCurrency(group.contribution_amount)}</span>
+                <span className="font-bold text-gray-900 whitespace-nowrap">{formatCurrency(group.contribution_amount)}</span>
               </div>
             </div>
             
@@ -308,6 +293,34 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
           </form>
         </Modal>
       )}
+
+      {/* Complete Cycle Confirmation Modal */}
+      <Modal
+        isOpen={confirmCompleteOpen}
+        onClose={() => setConfirmCompleteOpen(false)}
+        title="Finalise Cycle"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+            <span className="text-amber-500 text-xl">📦</span>
+            <div>
+              <p className="text-sm font-semibold text-amber-700">This will finalise the payout.</p>
+              <p className="text-sm text-amber-600 mt-1">
+                Once confirmed, this cycle will be marked as paid out and the next cycle will begin.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <Button variant="ghost" onClick={() => setConfirmCompleteOpen(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleCompleteCycle} loading={actionLoading} className="flex-1">
+              Yes, Finalise
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
     </div>
   );
 }

@@ -1,23 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function TopProgressBarInner() {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef(null);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setProgress(60),  50);
-    const t2 = setTimeout(() => setProgress(80),  200);
-    const t3 = setTimeout(() => setProgress(95),  400);
-    const t4 = setTimeout(() => setProgress(100), 600);
+    const bar = barRef.current;
+    if (bar) {
+      bar.style.width = '0%';
+      requestAnimationFrame(() => {
+        bar.style.width = '70%';
+      });
+    }
 
-    return () => [t1,t2,t3,t4].forEach(clearTimeout);
+    const done = setTimeout(() => {
+      if (bar) bar.style.width = '100%';
+    }, 500);
+
+    return () => clearTimeout(done);
   }, []);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[9999] h-0.5 bg-green-100 pointer-events-none">
       <div
-        style={{ width: `${progress}%` }}
-        className="h-full bg-green-600 transition-all duration-300 ease-out"
+        ref={barRef}
+        className="h-full bg-green-600 transition-all duration-[400ms] ease-out"
       />
     </div>
   );

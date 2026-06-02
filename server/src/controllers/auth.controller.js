@@ -176,6 +176,10 @@ exports.updateProfile = async (req, res, next) => {
     try {
         const { fullName, phone } = req.body;
         
+        if (phone && !/^\+220[0-9]{7}$/.test(phone)) {
+          return res.status(400).json({ success: false, error: { message: 'Phone must be in format +220XXXXXXX' } });
+        }
+        
         const updateData = {};
         if (fullName) updateData.full_name = fullName;
         if (phone) updateData.phone = phone;

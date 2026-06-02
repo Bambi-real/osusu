@@ -4,6 +4,16 @@ exports.getCyclesByGroup = async (req, res, next) => {
   try {
     const { groupId } = req.params;
 
+    const { data: isMember } = await supabaseAdmin
+      .from('group_members')
+      .select('id')
+      .eq('group_id', groupId)
+      .eq('user_id', req.user.id)
+      .single();
+    if (!isMember) {
+      return res.status(403).json({ success: false, error: { message: 'Not a member of this group' } });
+    }
+
     const { data: cycles, error } = await supabaseAdmin
       .from('cycles')
       .select('*, profiles:payout_user_id(id, full_name, phone)')
