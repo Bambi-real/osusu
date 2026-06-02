@@ -67,6 +67,12 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
     fetchCycles();
   }, [fetchCycles]);
 
+  useEffect(() => {
+    if (selectedCycleId) {
+      fetchCycleDetail(selectedCycleId);
+    }
+  }, [selectedCycleId]);
+
   const fetchCycleDetail = async (cycleId) => {
     try {
       const res = await api.get(`/cycles/${cycleId}`);
