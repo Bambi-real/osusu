@@ -30,16 +30,24 @@ exports.createGroup = async (req, res, next) => {
       return res.status(500).json({ success: false, error: { message: 'Error creating group' } });
     }
 
-    // Update profiles to ORGANISER
-    const { error: roleError } = await supabaseAdmin
+    // Only promote MEMBER → ORGANISER; don't downgrade SUPER_ADMIN or other roles
+    const { data: currentProfile } = await supabaseAdmin
       .from('profiles')
-      .update({ role: 'ORGANISER', updated_at: new Date().toISOString() })
-      .eq('id', req.user.id);
+      .select('role')
+      .eq('id', req.user.id)
+      .single();
 
-    if (roleError) {
-      logger.error('Failed to update profile role to ORGANISER after group creation', {
-        userId: req.user.id, groupId: group.id, error: roleError.message,
-      });
+    if (currentProfile?.role === 'MEMBER') {
+      const { error: roleError } = await supabaseAdmin
+        .from('profiles')
+        .update({ role: 'ORGANISER', updated_at: new Date().toISOString() })
+        .eq('id', req.user.id);
+
+      if (roleError) {
+        logger.error('Failed to update profile role to ORGANISER after group creation', {
+          userId: req.user.id, groupId: group.id, error: roleError.message,
+        });
+      }
     }
 
     // Insert into group_members
