@@ -52,6 +52,16 @@ exports.getCycleById = async (req, res, next) => {
       return res.status(404).json({ success: false, error: { message: 'Cycle not found' } });
     }
 
+    const { data: isMember } = await supabaseAdmin
+      .from('group_members')
+      .select('id')
+      .eq('group_id', cycle.group_id)
+      .eq('user_id', req.user.id)
+      .single();
+    if (!isMember) {
+      return res.status(403).json({ success: false, error: { message: 'Not a member of this group' } });
+    }
+
     const { data: contributions, error: contribError } = await supabaseAdmin
       .from('contributions')
       .select('*, profiles:user_id(full_name)')

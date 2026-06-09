@@ -20,6 +20,7 @@ const config = {
   MONTHLY:    { bg: 'bg-indigo-100', text: 'text-indigo-700', label: 'Monthly'   },
 
   // Role
+  SUPER_ADMIN: { bg: 'bg-red-100',   text: 'text-red-700',   label: 'Super Admin'},
   ORGANISER:  { bg: 'bg-green-50',   text: 'text-green-700', label: 'Organiser'  },
   MEMBER:     { bg: 'bg-gray-100',   text: 'text-gray-500',  label: 'Member'     },
 };

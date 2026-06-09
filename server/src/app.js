@@ -7,6 +7,7 @@ const authRoutes         = require('./routes/auth.routes');
 const groupRoutes        = require('./routes/groups.routes');
 const contributionRoutes = require('./routes/contributions.routes');
 const cycleRoutes        = require('./routes/cycles.routes');
+const adminRoutes        = require('./routes/admin.routes');
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use('/api/auth',          authRoutes);
 app.use('/api/groups',        groupRoutes);
 app.use('/api/contributions', contributionRoutes);
 app.use('/api/cycles',        cycleRoutes);
+app.use('/api/admin',         adminRoutes);
 
 // 404 handler — catch-all for unmatched routes
 app.use((req, res) => {

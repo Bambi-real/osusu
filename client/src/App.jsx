@@ -18,11 +18,33 @@ const ForgotPasswordPage  = lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage   = lazy(() => import('./pages/ResetPasswordPage'));
 const NotFoundPage        = lazy(() => import('./pages/NotFoundPage'));
 
+const AdminDashboard     = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers         = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminUserDetail    = lazy(() => import('./pages/admin/AdminUserDetail'));
+const AdminGroups        = lazy(() => import('./pages/admin/AdminGroups'));
+const AdminGroupDetail   = lazy(() => import('./pages/admin/AdminGroupDetail'));
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   const location = useLocation();
   if (loading) return <Spinner fullPage />;
   return user ? children : <Navigate to="/login" state={{ from: location }} replace />;
+}
+
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) return <Spinner fullPage />;
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== 'SUPER_ADMIN') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 }
 
 function PublicRoute({ children }) {
@@ -96,6 +118,13 @@ export default function App() {
               <Route path="/groups/new"     element={<ProtectedRoute><CreateGroupPage /></ProtectedRoute>} />
               <Route path="/groups/:id"     element={<ProtectedRoute><GroupDetailPage /></ProtectedRoute>} />
               <Route path="/profile"        element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+
+              <Route path="/admin" element={<AdminRoute><Suspense fallback={<Spinner fullPage />}><AdminDashboard /></Suspense></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><Suspense fallback={<Spinner fullPage />}><AdminUsers /></Suspense></AdminRoute>} />
+              <Route path="/admin/users/:id" element={<AdminRoute><Suspense fallback={<Spinner fullPage />}><AdminUserDetail /></Suspense></AdminRoute>} />
+              <Route path="/admin/groups" element={<AdminRoute><Suspense fallback={<Spinner fullPage />}><AdminGroups /></Suspense></AdminRoute>} />
+              <Route path="/admin/groups/:id" element={<AdminRoute><Suspense fallback={<Spinner fullPage />}><AdminGroupDetail /></Suspense></AdminRoute>} />
+
               <Route path="*"               element={<NotFoundPage />} />
             </Routes>
           </Suspense>

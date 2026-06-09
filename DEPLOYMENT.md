@@ -97,7 +97,52 @@ Once you have your Vercel URL, update the CLIENT_URL environment variable on Ren
 
 ---
 
-## Step 6 — Post-Deployment Smoke Test
+## Step 6 — Admin System Setup (Post-Deploy)
+
+> ⚠️ These SQL commands MUST be run in two separate batches in the Supabase SQL Editor.
+> `ALTER TYPE ... ADD VALUE` and subsequent usage of the new value cannot be in the same transaction.
+
+### Batch 1 — Add SUPER_ADMIN to enum (run first, by itself)
+
+```sql
+ALTER TYPE role_type ADD VALUE IF NOT EXISTS 'SUPER_ADMIN';
+SELECT enum_range(NULL::role_type);
+-- Expected: {MEMBER,ORGANISER,SUPER_ADMIN}
+```
+
+### Batch 2 — Create stats view & assign role (run after Batch 1 succeeds)
+
+```sql
+CREATE OR REPLACE VIEW public.platform_stats AS
+SELECT
+  (SELECT COUNT(*) FROM public.profiles) AS total_users,
+  (SELECT COUNT(*) FROM public.profiles WHERE role = 'ORGANISER') AS total_organisers,
+  (SELECT COUNT(*) FROM public.groups) AS total_groups,
+  (SELECT COUNT(*) FROM public.groups WHERE status = 'ACTIVE') AS active_groups,
+  (SELECT COUNT(*) FROM public.groups WHERE status = 'FORMING') AS forming_groups,
+  (SELECT COUNT(*) FROM public.groups WHERE status = 'COMPLETED') AS completed_groups,
+  (SELECT COUNT(*) FROM public.groups WHERE status = 'CANCELLED') AS cancelled_groups,
+  (SELECT COUNT(*) FROM public.contributions) AS total_contributions,
+  (SELECT COALESCE(SUM(amount), 0) FROM public.contributions) AS total_amount_contributed,
+  (SELECT COUNT(*) FROM public.cycles WHERE status = 'PAID_OUT') AS total_payouts_completed,
+  (SELECT COUNT(*) FROM public.group_members) AS total_memberships;
+
+-- ⚠️ There is NO API endpoint for this. It must be done manually via SQL.
+-- Replace 'your-email@example.com' with YOUR actual email
+UPDATE public.profiles
+SET role = 'SUPER_ADMIN'
+WHERE id = (SELECT id FROM auth.users WHERE email = 'your-email@example.com');
+
+SELECT id, full_name, phone, role, created_at
+FROM public.profiles
+WHERE role = 'SUPER_ADMIN';
+```
+
+The admin panel is then accessible at `/admin` on the live site.
+
+---
+
+## Step 7 — Post-Deployment Smoke Test
 
 Run through this checklist on the live URL:
 

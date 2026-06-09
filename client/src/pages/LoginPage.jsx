@@ -17,8 +17,6 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState(null);
-  const [passwordError, setPasswordError] = useState(null);
 
   useEffect(() => {
     document.title = 'Sign In — Osusu';
@@ -44,16 +42,15 @@ export default function LoginPage() {
     },
   };
 
-  const clearErrors = () => {
-    setEmailError(null);
-    setPasswordError(null);
-    setError(null);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      setLoading(false);
+      return;
+    }
     try {
       const res = await api.post('/auth/login', { 
         email, 
@@ -152,17 +149,16 @@ export default function LoginPage() {
           )}
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            <Input
-              label="Email address"
-              name="email"
-              type="email"
-              required
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(null); clearErrors(); }}
-              error={emailError}
-              autoComplete="email"
-            />
+              <Input
+                  label="Email address"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError(null); }}
+                  autoComplete="email"
+                />
             
             <div>
               <div className="flex items-center justify-between mb-1">
@@ -183,9 +179,9 @@ export default function LoginPage() {
                   required
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => { setPassword(e.target.value); if (passwordError) setPasswordError(null); clearErrors(); }}
+                  onChange={(e) => { setPassword(e.target.value); setError(null); }}
                   autoComplete="current-password"
-                  className={`w-full border rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors ${passwordError ? 'border-red-400' : 'border-gray-300'}`}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                 />
               <button
                 type="button"

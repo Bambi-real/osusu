@@ -136,11 +136,15 @@ exports.getGroupById = async (req, res, next) => {
     }));
 
     // Fetch Organiser details
-    const { data: organiser } = await supabaseAdmin
+    let organiser = { id: group.organiser_id, full_name: 'Unknown' };
+    const { data: organiserData } = await supabaseAdmin
       .from('profiles')
       .select('id, full_name')
       .eq('id', group.organiser_id)
-      .single() || { data: { id: group.organiser_id, full_name: 'Unknown' } };
+      .single();
+    if (organiserData) {
+      organiser = organiserData;
+    }
 
     // Fetch current active cycle if any
     let currentCycle = null;
