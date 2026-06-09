@@ -13,7 +13,7 @@ const Input = forwardRef(function Input({ label, name, type = 'text', placeholde
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`px-4 py-3 bg-white border-2 rounded-xl shadow-sm transition-all duration-300 outline-none
+        className={`px-4 py-3 bg-white border-2 rounded-xl shadow-sm transition-all duration-300 outline-none min-h-[44px]
           ${error 
             ? 'border-rose-300 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20 text-rose-900 bg-rose-50 placeholder-rose-300' 
             : 'border-slate-200 focus:border-green-500 focus:ring-4 focus:ring-green-500/20 text-slate-800 placeholder-slate-400 hover:border-slate-300'

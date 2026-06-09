@@ -1,4 +1,5 @@
 const { supabaseAdmin } = require('../lib/supabase');
+const logger = require('../lib/logger');
 
 async function getPlatformStats(req, res, next) {
   try {
@@ -8,7 +9,7 @@ async function getPlatformStats(req, res, next) {
       .single();
 
     if (error) {
-      console.error('[ADMIN] Stats error:', error);
+      logger.error('Failed to load platform stats', { error: error.message });
       return res.status(500).json({
         success: false,
         error: { message: 'Failed to load platform stats.' },

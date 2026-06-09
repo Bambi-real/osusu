@@ -2,6 +2,7 @@ const express  = require('express');
 const cors     = require('cors');
 const helmet   = require('helmet');
 const morgan   = require('morgan');
+const logger   = require('./lib/logger');
 
 const authRoutes         = require('./routes/auth.routes');
 const groupRoutes        = require('./routes/groups.routes');
@@ -32,7 +33,7 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    console.warn(`[CORS] Blocked origin: ${origin} (CLIENT_URL=${process.env.CLIENT_URL})`);
+    logger.warn(`Blocked CORS origin: ${origin}`, { clientUrl: process.env.CLIENT_URL });
     callback(null, false);
   },
   credentials: true,
@@ -79,16 +80,16 @@ app.use((req, res) => {
 
 // Global error handler — must be last, must have 4 args
 app.use((err, req, res, next) => {
-  console.error('[ERROR]', {
-    message:   err.message,
-    stack:     process.env.NODE_ENV === 'development'
-               ? err.stack : undefined,
-    path:      req.path,
-    method:    req.method,
-    timestamp: new Date().toISOString(),
+  const statusCode = err.status || err.statusCode || 500;
+
+  logger.error('Unhandled error', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+    statusCode,
   });
 
-  const statusCode = err.status || err.statusCode || 500;
   return res.status(statusCode).json({
     success: false,
     error: {

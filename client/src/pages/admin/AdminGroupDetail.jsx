@@ -16,7 +16,7 @@ export default function AdminGroupDetail() {
     let cancelled = false;
     adminApi.getGroup(id)
       .then(res => { if (!cancelled) setData(res.data.data); })
-      .catch(() => { if (!cancelled) setError('Group not found.'); })
+      .catch((err) => { if (!cancelled) { setError(err?.response?.data?.error?.message || 'Group not found.'); if (import.meta.env.DEV) console.warn('[AdminGroupDetail] error:', err?.message); } })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [id]);
@@ -57,8 +57,8 @@ export default function AdminGroupDetail() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <div className="flex items-start justify-between mb-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1 className="text-xl font-bold text-gray-900">{group.name}</h1>
@@ -116,7 +116,8 @@ export default function AdminGroupDetail() {
           <div className="px-4 py-3 border-b border-gray-200">
             <h2 className="font-semibold text-gray-900">Members</h2>
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
@@ -138,6 +139,7 @@ export default function AdminGroupDetail() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -146,7 +148,8 @@ export default function AdminGroupDetail() {
           <div className="px-4 py-3 border-b border-gray-200">
             <h2 className="font-semibold text-gray-900">Cycles</h2>
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Cycle</th>
@@ -170,6 +173,7 @@ export default function AdminGroupDetail() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

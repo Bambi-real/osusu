@@ -1,4 +1,5 @@
 const { supabaseAdmin, supabaseAnon } = require('../lib/supabase');
+const logger = require('../lib/logger');
 
 exports.register = async (req, res, next) => {
   try {
@@ -266,7 +267,7 @@ exports.forgotPassword = async (req, res, next) => {
     });
 
   } catch (err) {
-    console.error('[INFO] forgotPassword error:', err);
+    logger.error('Forgot password error', { error: err.message });
     return res.status(200).json({
       success: true,
       data: null,
@@ -314,7 +315,7 @@ exports.resetPassword = async (req, res, next) => {
     );
 
     if (updateError) {
-      console.error('[INFO] resetPassword update error:', updateError);
+      logger.error('Reset password update error', { error: updateError.message });
       return res.status(500).json({
         success: false,
         error: { message: 'Failed to update password. Please try again.' }

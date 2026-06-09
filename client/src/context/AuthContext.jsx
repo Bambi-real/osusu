@@ -12,7 +12,10 @@ export function AuthProvider({ children }) {
     try {
       const res = await api.get('/auth/me');
       setUser(res.data.data);
-    } catch {
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[Auth] loadProfile failed:', err?.response?.status, err?.message);
+      }
       setUser(null);
     } finally {
       setLoading(false);
@@ -20,13 +23,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        loadProfile();
-      } else {
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (session) {
+          loadProfile();
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[Auth] getSession failed:', err?.message);
+        }
         setLoading(false);
-      }
-    });
+      });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
@@ -68,7 +78,13 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     setUser(null);
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[Auth] signOut error:', err?.message);
+      }
+    }
   }
 
   return (

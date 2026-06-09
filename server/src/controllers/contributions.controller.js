@@ -1,4 +1,5 @@
 const { supabaseAdmin } = require('../lib/supabase');
+const logger = require('../lib/logger');
 
 exports.createContribution = async (req, res, next) => {
   try {
@@ -79,7 +80,12 @@ exports.createContribution = async (req, res, next) => {
       { cycle_id: cycleId, amount_to_add: Number(amount) }
     );
     if (rpcError) {
-      console.error('[INFO] Failed to increment total_collected:', rpcError);
+      // Rollback: delete the contribution we just inserted
+      await supabaseAdmin.from('contributions').delete().eq('id', contribution.id);
+      logger.error('Failed to increment total_collected — rolled back contribution', {
+        contributionId: contribution.id, cycleId, amount, rpcError: rpcError.message,
+      });
+      return res.status(500).json({ success: false, error: { message: 'Failed to update cycle total. Please try again.' } });
     }
 
     res.status(201).json({ success: true, data: contribution });
@@ -198,7 +204,11 @@ exports.deleteContribution = async (req, res, next) => {
       { cycle_id: contribution.cycle_id, amount_to_remove: Number(contribution.amount) }
     );
     if (rpcError) {
-      console.error('[INFO] Failed to decrement total_collected:', rpcError);
+      logger.error('Failed to decrement total_collected — data may be inconsistent', {
+        contributionId: id, cycleId: contribution.cycle_id, rpcError: rpcError.message,
+      });
+      // Don't rollback the delete since the contribution is already removed.
+      // Log prominently so operators can reconcile.
     }
 
     res.status(200).json({ success: true, data: { message: 'Contribution deleted' } });

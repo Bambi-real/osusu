@@ -81,8 +81,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex page-enter">
-      {/* Left panel — desktop only */}
+    <div className="min-h-screen flex flex-col lg:flex-row page-enter">
+      {/* Left panel — hidden on mobile, visible lg+ */}
       <div className="hidden lg:flex lg:w-1/2 bg-green-600 flex-col justify-between p-12">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-green-600">
@@ -120,22 +120,15 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-8 bg-gray-50">
+      {/* Right panel — full screen on mobile */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-8 min-h-screen lg:min-h-0 bg-gray-50">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg flex items-center justify-center text-white">
-              <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" className="w-5 h-5">
-                <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
-                <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
-                <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
-                <circle cx="20" cy="34" r="3.5" fill="currentColor"/>
-                <circle cx="6" cy="20" r="3.5" fill="currentColor"/>
-                <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+          {/* Mobile logo — only shows when left panel hidden */}
+          <div className="flex items-center justify-center gap-2 mb-8 lg:hidden">
+            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-black text-lg">O</span>
             </div>
-            <span className="font-bold text-gray-900">Osusu</span>
+            <span className="font-bold text-gray-900 text-xl">Osusu</span>
           </div>
 
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
@@ -148,6 +141,7 @@ export default function LoginPage() {
             </div>
           )}
 
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
           <form className="space-y-5" onSubmit={handleSubmit}>
               <Input
                   label="Email address"
@@ -181,7 +175,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError(null); }}
                   autoComplete="current-password"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 pr-10 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors min-h-[44px]"
                 />
               <button
                 type="button"
@@ -200,10 +194,11 @@ export default function LoginPage() {
             
             {error && <p className="text-xs text-red-600 flex items-center gap-1" role="alert"><span>⚠</span> {error}</p>}
             
-            <Button type="submit" loading={loading} className="w-full">
+            <Button type="submit" loading={loading} className="w-full min-h-[48px]">
               Sign in
             </Button>
           </form>
+          </div>
 
           <div className="mt-8">
             <div className="relative">

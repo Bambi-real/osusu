@@ -103,7 +103,7 @@ export default function CreateGroupPage() {
   if (inviteCode) {
     return (
       <div className="fixed inset-0 z-50 bg-green-50 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-white shadow-2xl rounded-2xl p-10 text-center animate-fade-in-up">
+        <div className="max-w-2xl w-full bg-white shadow-2xl rounded-2xl p-5 sm:p-10 text-center animate-fade-in-up">
           <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-100 mb-8 border-4 border-white shadow-sm">
             <svg aria-hidden="true" className="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -115,7 +115,7 @@ export default function CreateGroupPage() {
           <div className="flex flex-col items-center justify-center mb-10 bg-gray-50 p-6 rounded-xl border border-gray-100">
             <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Invite Code</div>
             <div className="flex items-center space-x-4">
-              <code className="px-6 py-3 bg-white text-green-600 rounded-lg text-3xl font-bold border border-green-200 shadow-sm font-mono tracking-wider">
+              <code className="px-4 py-2 sm:px-6 sm:py-3 bg-white text-green-600 rounded-lg text-xl sm:text-3xl font-bold border border-green-200 shadow-sm font-mono tracking-wider">
                 {inviteCode}
               </code>
               <button 
@@ -186,12 +186,10 @@ export default function CreateGroupPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-          
-          {/* Wizard card — takes 3/5 columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-start">
+
           <div className="lg:col-span-3">
-          <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
-          <div className="p-5 sm:p-8 lg:p-10">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6">
             {currentStep === 1 && (
               <form onSubmit={handleNext} className="space-y-6 animate-fade-in">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Group Basics</h3>
@@ -219,8 +217,9 @@ export default function CreateGroupPage() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end pt-6 mt-6 border-t border-gray-100">
-                  <Button type="submit" variant="primary" className="px-8 py-3 rounded-lg font-medium">Next Step</Button>
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 mt-6 pt-6 border-t border-gray-100">
+                  <div />
+                  <Button type="submit" variant="primary" className="w-full sm:w-auto sm:ml-auto">Next Step</Button>
                 </div>
               </form>
             )}
@@ -285,9 +284,9 @@ export default function CreateGroupPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex justify-between pt-6 mt-6 border-t border-gray-100">
-                  <Button type="button" variant="ghost" onClick={handlePrev} className="px-6 py-3 rounded-lg text-gray-600 hover:bg-gray-100">Back</Button>
-                  <Button type="submit" variant="primary" className="px-8 py-3 rounded-lg font-medium">Next Step</Button>
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 mt-6 pt-6 border-t border-gray-100">
+                  <Button type="button" variant="ghost" onClick={handlePrev} className="w-full sm:w-auto">Back</Button>
+                  <Button type="submit" variant="primary" className="w-full sm:w-auto">Next Step</Button>
                 </div>
               </form>
             )}
@@ -352,17 +351,15 @@ export default function CreateGroupPage() {
                 
                 {error && <div className="text-red-500 text-sm font-medium p-3 bg-red-50 rounded-lg border border-red-200" role="alert">{error}</div>}
                 
-                <div className="flex justify-between pt-6 mt-6 border-t border-gray-100">
-                  <Button type="button" variant="ghost" onClick={handlePrev} disabled={loading} className="px-6 py-3 rounded-lg text-gray-600 hover:bg-gray-100">Back</Button>
-                  <Button type="submit" variant="primary" loading={loading} className="px-8 py-3 rounded-lg font-medium shadow-md">Create Group</Button>
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 mt-6 pt-6 border-t border-gray-100">
+                  <Button type="button" variant="ghost" onClick={handlePrev} disabled={loading} className="w-full sm:w-auto">Back</Button>
+                  <Button type="submit" variant="primary" loading={loading} className="w-full sm:w-auto">Create Group</Button>
                 </div>
               </form>
             )}
           </div>
           </div>
-          </div>
           
-          {/* Tips panel — takes 2/5 columns, desktop only */}
           <div className="hidden lg:block lg:col-span-2">
             <div className="bg-green-50 rounded-2xl p-5 border border-green-100">
               <h3 className="text-sm font-semibold text-green-800 mb-3 flex items-center gap-2">

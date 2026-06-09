@@ -24,8 +24,9 @@ export default function ForgotPasswordPage() {
       await api.post('/auth/forgot-password', {
         email: email.trim().toLowerCase()
       });
-    } catch {
-      // Intentionally swallow error
+    } catch (err) {
+      if (import.meta.env.DEV) console.warn('[ForgotPassword] error:', err?.message);
+      // Intentionally don't reveal whether email exists
     } finally {
       setLoading(false);
       setSubmitted(true);
@@ -81,7 +82,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left panel — desktop only */}
       <div className="hidden lg:flex lg:w-1/2 bg-green-600 flex-col justify-between p-12">
         <div className="flex items-center gap-3">
@@ -157,7 +158,7 @@ export default function ForgotPasswordPage() {
                   placeholder="Enter your email"
                   autoFocus
                   autoComplete="email"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors min-h-[44px]"
                 />
                 {error && (
                   <p className="mt-1 text-xs text-red-600 flex items-center gap-1" role="alert">
@@ -169,14 +170,14 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-150 flex items-center justify-center gap-2">
-                {loading && (
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                  </svg>
-                )}
-                {loading ? 'Sending...' : 'Send Reset Link'}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 min-h-[48px]">
+                  {loading && (
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                  )}
+                  {loading ? 'Sending...' : 'Send Reset Link'}
               </button>
             </form>
 

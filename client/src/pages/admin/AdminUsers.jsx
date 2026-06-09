@@ -26,8 +26,9 @@ export default function AdminUsers() {
       });
       setUsers(res.data.data);
       setPagination(res.data.pagination);
-    } catch {
-      setError('Failed to load users.');
+    } catch (err) {
+      setError(err?.response?.data?.error?.message || 'Failed to load users.');
+      if (import.meta.env.DEV) console.warn('[AdminUsers] load error:', err?.message);
     } finally {
       setLoading(false);
     }
@@ -56,7 +57,7 @@ export default function AdminUsers() {
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search by name..."
-          className="w-full sm:max-w-xs border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          className="w-full sm:max-w-xs border border-gray-300 rounded-lg px-3 py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 min-h-[44px]"
         />
       </div>
 
@@ -127,13 +128,13 @@ export default function AdminUsers() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors">
+                className="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors min-h-[44px]">
                 Previous
               </button>
               <button
                 onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
                 disabled={page === pagination.totalPages}
-                className="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors">
+                className="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors min-h-[44px]">
                 Next
               </button>
             </div>

@@ -107,12 +107,12 @@ export default function GroupDetailPage() {
     }
   };
 
-  const copyToClipboard = async (text) => {
+  const handleCopyCode = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(data.group.invite_code);
     } catch {
       const el = document.createElement('textarea');
-      el.value = text;
+      el.value = data.group.invite_code;
       el.style.position = 'fixed';
       el.style.opacity = '0';
       document.body.appendChild(el);
@@ -125,10 +125,6 @@ export default function GroupDetailPage() {
       }
       document.body.removeChild(el);
     }
-  };
-
-  const handleCopyCode = async () => {
-    await copyToClipboard(data.group.invite_code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -168,53 +164,61 @@ export default function GroupDetailPage() {
   return (
     <PageWrapper size="wide">
       <div className="page-enter space-y-6">
-        <Breadcrumb items={[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: group?.name || 'Group' }
-        ]} />
+        <div className="mb-6">
+          <Breadcrumb items={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: group?.name || 'Group' }
+          ]} />
 
-        {/* Group Header */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
+          <div className="flex flex-col sm:flex-row
+                          sm:items-center sm:justify-between
+                          gap-3">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-gray-900">{group.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {group.name}
+              </h1>
               <Badge status={group.status} />
             </div>
-
-            <div className="flex items-center gap-2 sm:gap-4 mt-2 text-sm text-gray-500 flex-wrap">
-              <span className="whitespace-nowrap">{frequencyLabel[group.frequency]} · {formatCurrency(group.contribution_amount)}</span>
-              <span>{members.length} of {group.max_members} members</span>
-              <span>Started {formatDate(group.start_date)}</span>
-              <span>
-                Organiser: <span className="font-medium text-gray-900">{isOrganiser ? `${user.fullName} (You)` : organiser.full_name}</span>
-              </span>
-            </div>
-
-            <div className="mt-3 text-sm">
-              {group.description ? (
-                <p className="text-gray-600">{group.description}</p>
-              ) : (
-                <p className="text-gray-400 italic">No description provided.</p>
-              )}
-            </div>
+            {isOrganiser && group.status === 'FORMING' && (
+              <div className="flex items-center gap-2 bg-gray-50
+                              border border-gray-200 rounded-lg
+                              px-3 py-2 w-full sm:w-auto">
+                <span className="text-xs text-gray-400 font-medium
+                                 flex-shrink-0">
+                  CODE
+                </span>
+                <code className="text-sm font-mono font-semibold
+                                 text-gray-800 flex-1 truncate">
+                  {group.invite_code}
+                </code>
+                <button onClick={handleCopyCode}
+                        className="text-green-600 hover:text-green-700
+                                   text-xs font-medium flex-shrink-0
+                                   min-h-0">
+                  {copied ? 'Copied ✓' : 'Copy'}
+                </button>
+              </div>
+            )}
           </div>
 
-          {isOrganiser && group.status === 'FORMING' && (
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-shrink-0 min-w-0 overflow-hidden max-w-full sm:max-w-none self-start">
-              <span className="text-xs text-gray-400 font-medium uppercase tracking-wide flex-shrink-0">INVITE CODE</span>
-              <code className="text-sm font-mono font-semibold text-gray-800 truncate max-w-[120px] sm:max-w-none">{group.invite_code}</code>
-              <button
-                onClick={handleCopyCode}
-                aria-label="Copy invite code"
-                className="text-green-600 hover:text-green-700 text-xs font-medium whitespace-nowrap"
-              >
-                {copied ? 'Copied ✓' : 'Copy'}
-              </button>
-            </div>
+          <div className="flex flex-wrap items-center gap-x-4
+                          gap-y-1 mt-2 text-sm text-gray-500">
+            <span className="whitespace-nowrap">{frequencyLabel[group.frequency]}</span>
+            <span>·</span>
+            <span className="whitespace-nowrap">
+              {formatCurrency(group.contribution_amount)}
+            </span>
+            <span>·</span>
+            <span>{members.length} of {group.max_members} members</span>
+            <span>·</span>
+            <span>Started {formatDate(group.start_date)}</span>
+          </div>
+
+          {group.description && (
+            <p className="text-sm text-gray-600 mt-3">{group.description}</p>
           )}
         </div>
 
-        {/* Cancelled Banner */}
         {group.status === 'CANCELLED' && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
             <span className="text-red-500 text-lg mt-0.5">⚠️</span>
@@ -227,24 +231,29 @@ export default function GroupDetailPage() {
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="flex border-b border-gray-200 overflow-x-auto scrollbar-hide">
+        <div className="flex border-b border-gray-200 mb-6
+                        overflow-x-auto scrollbar-hide
+                        -mx-4 px-4 sm:mx-0 sm:px-0">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                activeTab === tab.id
-                  ? 'border-green-600 text-green-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`
+                flex-shrink-0 px-4 py-3 text-sm font-medium
+                whitespace-nowrap border-b-2 -mb-px
+                transition-colors
+                min-h-[44px]
+                ${activeTab === tab.id
+                  ? "border-green-600 text-green-700"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+                }
+              `}
             >
               {tab.label}
             </button>
           ))}
         </div>
 
-        {/* Tab Content */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {group.status === 'FORMING' && isOrganiser && (
@@ -273,7 +282,6 @@ export default function GroupDetailPage() {
               </div>
             )}
 
-            {/* Members List */}
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <h2 className="text-base font-semibold text-gray-900">Members</h2>
@@ -297,31 +305,29 @@ export default function GroupDetailPage() {
                     return (
                       <div
                         key={member.id}
-                        className={`flex items-center gap-3 p-4 rounded-xl border transition-colors ${
+                        className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
                           isCurrentRecipient ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100 hover:bg-gray-100'
                         }`}
                       >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                        <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold ${
                           isCurrentRecipient ? 'bg-amber-200 text-amber-800' : 'bg-green-100 text-green-700'
                         }`}>
                           {initials}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-semibold text-gray-900 truncate">
-                              {member.user.fullName}
-                            </p>
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {member.user.fullName}
                             {isYou && (
-                              <span className="text-xs text-green-600 font-medium flex-shrink-0">(You)</span>
+                              <span className="text-green-600 ml-1">(You)</span>
                             )}
-                          </div>
-                          <p className="text-xs text-gray-400">
+                          </p>
+                          <p className="text-xs text-gray-400 truncate">
                             {isCurrentRecipient ? '🏆 Receiving this cycle' : `Joined ${formatRelativeDate(member.joined_at)}`}
                           </p>
                         </div>
 
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                        <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold ${
                           isCurrentRecipient ? 'bg-amber-500 text-white' : 'bg-white border-2 border-gray-200 text-gray-600'
                         }`}>
                           {member.payout_order}
@@ -333,7 +339,6 @@ export default function GroupDetailPage() {
               )}
             </div>
 
-            {/* Group Management */}
             {isOrganiser && (group.status === 'FORMING' || group.status === 'ACTIVE') && (
               <div className="pt-6 border-t border-gray-200">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Group Management</h3>
@@ -341,7 +346,7 @@ export default function GroupDetailPage() {
                   {group.status === 'FORMING' && (
                     <button
                       onClick={() => setShowDeleteModal(true)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50 transition-all"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50 transition-all min-h-[44px]"
                     >
                       <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -352,7 +357,7 @@ export default function GroupDetailPage() {
                   {group.status === 'ACTIVE' && (
                     <button
                       onClick={() => setShowCancelModal(true)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-200 text-amber-700 text-sm font-medium hover:bg-amber-50 transition-all"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-200 text-amber-700 text-sm font-medium hover:bg-amber-50 transition-all min-h-[44px]"
                     >
                       <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
@@ -378,7 +383,6 @@ export default function GroupDetailPage() {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={showDeleteModal}
         onClose={() => !actionLoading && setShowDeleteModal(false)}
@@ -402,14 +406,14 @@ export default function GroupDetailPage() {
             <button
               onClick={() => setShowDeleteModal(false)}
               disabled={actionLoading}
-              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-all min-h-[44px]"
             >
               Cancel
             </button>
             <button
               onClick={handleDeleteGroup}
               disabled={actionLoading}
-              className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2 min-h-[44px]"
             >
               {actionLoading ? <LoadingSpinner size="sm" /> : null}
               {actionLoading ? 'Deleting...' : 'Yes, Delete Group'}
@@ -418,7 +422,6 @@ export default function GroupDetailPage() {
         </div>
       </Modal>
 
-      {/* Archive Confirmation Modal */}
       <Modal
         isOpen={showCancelModal}
         onClose={() => !actionLoading && setShowCancelModal(false)}
@@ -456,14 +459,14 @@ export default function GroupDetailPage() {
             <button
               onClick={() => setShowCancelModal(false)}
               disabled={actionLoading}
-              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-all"
+              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-all min-h-[44px]"
             >
               Keep Group Active
             </button>
             <button
               onClick={handleCancelGroup}
               disabled={actionLoading}
-              className="flex-1 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 disabled:opacity-50 transition-all flex items-center justify-center gap-2 min-h-[44px]"
             >
               {actionLoading ? <LoadingSpinner size="sm" /> : null}
               {actionLoading ? 'Archiving...' : 'Archive Group'}

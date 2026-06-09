@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { requireOrganiser } = require('../middleware/requireOrganiser');
+const { apiLimiter } = require('../middleware/rateLimiter');
 const groupsController = require('../controllers/groups.controller');
 
 router.use(authenticateToken);
+router.use(apiLimiter);
 
 router.post('/', groupsController.createGroup);
 router.get('/my', groupsController.getMyGroups);

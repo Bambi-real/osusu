@@ -1,22 +1,22 @@
 export default function Button({ variant = 'primary', size = 'md', loading, disabled, onClick, children, type = 'button', className = '' }) {
-  const baseStyles = 'relative inline-flex items-center justify-center font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 overflow-hidden';
-  
+  const baseStyles = 'relative inline-flex items-center justify-center font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-150 overflow-hidden';
+
   const variants = {
-    primary: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500 shadow-green-600/30 shadow-lg',
+    primary: 'bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white focus:ring-green-500',
     secondary: 'bg-white text-gray-800 border-2 border-gray-200 hover:border-green-300 hover:bg-green-50 focus:ring-green-500 hover:text-green-700 shadow-sm',
-    danger: 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white focus:ring-rose-500 shadow-rose-500/40 shadow-lg',
+    danger: 'bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white focus:ring-rose-500',
     ghost: 'bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-300 shadow-none',
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-5 py-2.5 text-sm',
-    lg: 'px-8 py-4 text-base tracking-wide',
+    sm: 'px-4 py-2 text-sm min-h-[44px]',
+    md: 'px-5 py-2.5 text-sm min-h-[44px]',
+    lg: 'px-8 py-4 text-base min-h-[52px]',
   };
 
   const variantStyles = variants[variant] || variants.primary;
   const sizeStyles = sizes[size] || sizes.md;
-  const disabledStyles = (disabled || loading) ? 'opacity-50 cursor-not-allowed transform-none hover:shadow-none saturate-50' : 'hover:-translate-y-0.5 active:scale-95 active:shadow-none hover:shadow-xl';
+  const disabledStyles = (disabled || loading) ? 'opacity-50 cursor-not-allowed transform-none hover:shadow-none' : 'active:scale-95';
 
   return (
     <button

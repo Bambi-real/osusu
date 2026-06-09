@@ -125,11 +125,11 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-sm' : 'bg-transparent'}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white">
-                  <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" className="w-7 h-7">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white">
+                  <svg aria-hidden="true" viewBox="0 0 40 40" fill="none" className="w-5 h-5 sm:w-7 sm:h-7">
                     <circle cx="20" cy="20" r="14" stroke="currentColor" strokeWidth="2.5"/>
                     <circle cx="20" cy="6" r="3.5" fill="currentColor"/>
                     <circle cx="34" cy="20" r="3.5" fill="currentColor"/>
@@ -138,7 +138,7 @@ export default function LandingPage() {
                     <path d="M20 6 A14 14 0 0 1 34 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                 </div>
-                <span className="font-extrabold text-2xl tracking-tighter text-gray-900">Osusu</span>
+                <span className="font-extrabold text-xl sm:text-2xl tracking-tighter text-gray-900">Osusu</span>
               </Link>
             </div>
 
@@ -160,10 +160,10 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="md:hidden flex items-center space-x-4">
+            <div className="md:hidden flex items-center space-x-3">
               <Link to="/login" className="text-sm font-semibold text-gray-600">Login</Link>
-              <Link to="/register" className="bg-green-600 text-white rounded-full px-4 py-2 text-sm font-semibold">
-                Get Started →
+              <Link to="/register" className="bg-green-600 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold">
+                Get Started
               </Link>
             </div>
           </div>
@@ -194,13 +194,23 @@ export default function LandingPage() {
               Track contributions, automate payout schedules, and keep every member accountable — right from your phone. No more notebooks.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-8">
-              <a href="/register"
-                 className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-green-200 hover:shadow-xl hover:shadow-green-200 transition-all duration-200 text-base">
+            <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center lg:justify-start">
+              <a href="/register" className="
+                w-full sm:w-auto text-center
+                bg-green-600 hover:bg-green-700 text-white
+                font-semibold px-8 py-4 rounded-full
+                transition-all min-h-[52px] flex items-center
+                justify-center
+              ">
                 Get Started — It's Free
               </a>
-              <a href="#how-it-works"
-                 className="border-2 border-gray-200 hover:border-green-400 text-gray-700 font-semibold px-8 py-4 rounded-full transition-all duration-200 text-base">
+              <a href="#how-it-works" className="
+                w-full sm:w-auto text-center
+                border-2 border-gray-200 hover:border-green-400
+                text-gray-700 font-semibold px-8 py-4 rounded-full
+                transition-all min-h-[52px] flex items-center
+                justify-center
+              ">
                 See How It Works
               </a>
             </div>
@@ -219,7 +229,7 @@ export default function LandingPage() {
       {/* Social Proof Bar */}
       <div className="border-y border-gray-100 bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="grid grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
             {[
               { value: '2–50', label: 'Members per group', sub: 'Flexible group sizes' },
               { value: 'Daily', label: 'Fastest cycle', sub: 'Weekly & monthly too' },
@@ -253,39 +263,39 @@ export default function LandingPage() {
           <div className="relative">
             <div className="hidden md:block absolute top-8 left-1/4 right-1/4 h-0.5 border-t-2 border-dashed border-green-200 z-0" />
 
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
+              {[
+                {
+                  step: 'Step 1',
+                  title: 'Create Your Group',
+                  desc: 'Set your contribution amount, frequency (daily, weekly, or monthly), and how many members you want. Share the invite code with your group.',
+                  svg: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
+                },
+                {
+                  step: 'Step 2',
+                  title: 'Members Join',
+                  desc: 'Every member joins using the invite code. Once everyone is in, start the group — payout positions are randomly and fairly assigned.',
+                  svg: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+                },
+                {
+                  step: 'Step 3',
+                  title: 'Track & Pay Out',
+                  desc: 'The organiser records each contribution. The app tracks who has paid, who hasn\'t, and who receives the pot each cycle. Everyone stays accountable.',
+                  svg: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+                },
+              ].map((item, i) => (
+                <div key={i} className="text-center relative">
+                  {i < 2 && (
+                    <div className="md:hidden absolute left-1/2 -translate-x-1/2 top-16 w-0.5 h-8 bg-green-200" />
+                  )}
+                  <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.svg} /></svg>
+                  </div>
+                  <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">{item.step}</p>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
                 </div>
-                <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 1</p>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Create Your Group</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Set your contribution amount, frequency (daily, weekly, or monthly), and how many members you want. Share the invite code with your group.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </div>
-                <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 2</p>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Members Join</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Every member joins using the invite code. Once everyone is in, start the group — payout positions are randomly and fairly assigned.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-white border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg aria-hidden="true" className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                </div>
-                <p className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Step 3</p>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Track & Pay Out</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  The organiser records each contribution. The app tracks who has paid, who hasn't, and who receives the pot each cycle. Everyone stays accountable.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -299,7 +309,7 @@ export default function LandingPage() {
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">Everything your osusu group needs</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {features.map((feature, i) => (
               <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-green-100 hover:shadow-md transition-all">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${featureColors[i]}`}>
@@ -323,7 +333,7 @@ export default function LandingPage() {
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">Technology for a tradition that works</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div>
               <p className="text-gray-600 text-lg leading-relaxed mb-6">
                 The osusu is one of the oldest and most trusted savings systems in West Africa.

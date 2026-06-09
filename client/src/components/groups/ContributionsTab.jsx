@@ -44,7 +44,6 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [confirmCompleteOpen, setConfirmCompleteOpen] = useState(false);
@@ -57,8 +56,9 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
         const active = res.data.data.find(c => c.status === 'COLLECTING') || res.data.data[0];
         setSelectedCycleId(active.id);
       }
-    } catch {
-      setError('Failed to load cycles for dropdown.');
+    } catch (err) {
+      setError(err?.response?.data?.error?.message || 'Failed to load cycles for dropdown.');
+      if (import.meta.env.DEV) console.warn('[ContributionsTab] fetchCycles error:', err?.message);
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
       const res = await api.get(`/cycles/${cycleId}`);
       setCycleData(res.data.data);
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) console.warn('[ContributionsTab] fetchCycleDetail error:', err?.message);
     }
   };
 
@@ -121,8 +121,9 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
       if (nextCollecting) {
         setSelectedCycleId(nextCollecting.id);
       }
-    } catch {
-      toast.error('Failed to complete cycle.');
+    } catch (err) {
+      toast.error(err?.response?.data?.error?.message || 'Failed to complete cycle.');
+      if (import.meta.env.DEV) console.warn('[ContributionsTab] completeCycle error:', err?.message);
     } finally {
       setActionLoading(false);
     }
@@ -136,52 +137,39 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
 
   return (
     <div className="space-y-5">
-      {/* Cycle selector + recipient info — full width row */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-        {cycles.length <= 8 ? (
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide flex-shrink-0">
-            {cycles.map(c => (
-              <button
-                key={c.id}
-                onClick={() => setSelectedCycleId(c.id)}
-                className={`flex-shrink-0 px-2.5 sm:px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCycleId === c.id ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-              >
-                Cycle {c.cycle_number}
-                {c.status === 'COLLECTING' && (
-                  <span className="ml-1.5 w-1.5 h-1.5 bg-amber-400 rounded-full inline-block" />
-                )}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <select
-            className="block w-full md:w-64 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md shadow-sm border"
-            value={selectedCycleId}
-            onChange={(e) => setSelectedCycleId(e.target.value)}
-          >
-            {cycles.map(c => (
-              <option key={c.id} value={c.id}>
-                Cycle {c.cycle_number} — Due {formatDate(c.due_date)} {c.status === 'PAID_OUT' ? '(Completed)' : ''}
-              </option>
-            ))}
-          </select>
-        )}
-        {cycleData && (
-          <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex-shrink-0 min-w-0">
-            <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-              {cycleData.payoutUser?.full_name?.charAt(0) || '?'}
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs text-gray-400">Recipient</p>
-              <p className="text-sm font-semibold text-gray-900 truncate max-w-[100px] sm:max-w-none">{cycleData.payoutUser?.full_name}</p>
-            </div>
-          </div>
-        )}
+      <div className="overflow-x-auto scrollbar-hide
+                      -mx-4 px-4 sm:mx-0 sm:px-0 mb-4">
+        <div className="flex gap-2 pb-2 min-w-max sm:min-w-0
+                        sm:flex-wrap">
+          {cycles.map(c => (
+            <button
+              key={c.id}
+              onClick={() => setSelectedCycleId(c.id)}
+              className={`
+                flex-shrink-0 flex items-center gap-1.5
+                px-3 py-1.5 rounded-full text-sm
+                font-medium transition-all whitespace-nowrap
+                ${selectedCycleId === c.id
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }
+              `}>
+              Cycle {c.cycle_number}
+              {c.status === 'COLLECTING' && (
+                <span className="w-1.5 h-1.5 bg-amber-400
+                                 rounded-full" />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
       {cycleData && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-1 bg-gray-50 rounded-xl p-5 flex flex-col items-center justify-center">
+        <div className="flex flex-col lg:flex-row gap-5">
+
+          <div className="lg:w-48 bg-gray-50 rounded-xl p-5
+                          flex flex-col items-center
+                          justify-center">
             <CircularProgress
               value={cycleData.contributions?.length || 0}
               max={members.length}
@@ -189,34 +177,47 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
             <p className="text-sm font-semibold text-gray-900 mt-3">
               {cycleData.contributions?.length || 0} of {members.length} paid
             </p>
-            <p className="text-xs text-gray-400 mt-1 whitespace-nowrap">
-              {formatCurrency(cycleData.total_collected)} / {formatCurrency(cycleData.total_expected)}
+            <p className="text-xs text-gray-400 mt-1 text-center">
+              <span className="whitespace-nowrap">
+                {formatCurrency(cycleData.total_collected)}
+              </span>
+              {' / '}
+              <span className="whitespace-nowrap">
+                {formatCurrency(cycleData.total_expected)}
+              </span>
             </p>
-              {isOrganiser && !isCycleComplete && cycleData.status === 'COLLECTING' && (cycleData.contributions?.length || 0) === members.length && (
-                <Button variant="primary" onClick={handleConfirmComplete} loading={actionLoading} className="mt-4 w-full">
-                  Finalise & Payout
-                </Button>
-              )}
+            {isOrganiser && !isCycleComplete && cycleData.status === 'COLLECTING' && (cycleData.contributions?.length || 0) === members.length && (
+              <Button variant="primary" onClick={handleConfirmComplete} loading={actionLoading} className="mt-4 w-full">
+                Finalise & Payout
+              </Button>
+            )}
           </div>
 
-          <div className="lg:col-span-2 space-y-2">
+          <div className="flex-1 space-y-2">
             {members.map(member => {
               const contribution = cycleData.contributions?.find(c => c.user_id === member.user.id);
               const hasPaid = !!contribution;
 
               return (
-                <div key={member.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${hasPaid ? 'bg-green-50 border-green-100' : 'bg-white border-gray-200 hover:bg-gray-50'}`}>
-                  {hasPaid ? (
-                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg aria-hidden="true" className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  ) : (
-                    <div className="w-5 h-5 bg-gray-200 rounded-full flex-shrink-0" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{member.user.fullName}</p>
+                <div key={member.id} className={`
+                  flex items-center gap-3 p-3 rounded-xl border transition-colors min-w-0
+                  ${hasPaid ? 'bg-green-50 border-green-100' : 'bg-white border-gray-200 hover:bg-gray-50'}
+                `}>
+                  <div className="flex-shrink-0">
+                    {hasPaid ? (
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg aria-hidden="true" className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <div className="w-5 h-5 bg-gray-200 rounded-full flex-shrink-0" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {member.user.fullName}
+                    </p>
                     {hasPaid ? (
                       <p className="text-xs text-green-600">Paid {formatDate(contribution.paid_at)}</p>
                     ) : (
@@ -224,21 +225,28 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
                     )}
                   </div>
 
-                  {hasPaid && (
-                    <span className="text-sm font-semibold text-green-700 whitespace-nowrap">{formatCurrency(contribution.amount)}</span>
-                  )}
-
-                  {isOrganiser && !isCycleComplete && !hasPaid && (
-                    <button
-                      onClick={() => {
-                        setSelectedMember(member.user);
-                        setIsModalOpen(true);
-                      }}
-                      className="text-xs font-semibold text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors"
-                    >
-                      Mark Paid
-                    </button>
-                  )}
+                  <div className="flex-shrink-0">
+                    {hasPaid ? (
+                      <span className="text-sm font-semibold text-green-700 whitespace-nowrap">
+                        {formatCurrency(contribution.amount)}
+                      </span>
+                    ) : isOrganiser ? (
+                      <button
+                        onClick={() => {
+                          setSelectedMember(member.user);
+                          setIsModalOpen(true);
+                        }}
+                        className="text-xs font-semibold text-green-600
+                                   bg-green-50 hover:bg-green-100
+                                   px-3 py-1.5 rounded-lg
+                                   transition-colors whitespace-nowrap
+                                   min-h-0 h-auto">
+                        Mark Paid
+                      </button>
+                    ) : (
+                      <Badge status="UNPAID" />
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -246,7 +254,6 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
         </div>
       )}
 
-      {/* Mark Paid Modal */}
       {isModalOpen && selectedMember && (
         <Modal
           isOpen={isModalOpen}
@@ -256,11 +263,11 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
           <form onSubmit={handleMarkPaid} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-              <input 
-                type="number" 
-                readOnly 
-                value={group.contribution_amount} 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed text-gray-500"
+              <input
+                type="number"
+                readOnly
+                value={group.contribution_amount}
+                className="w-full px-3 py-3 text-base border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed text-gray-500"
               />
             </div>
             <div className="bg-gray-50 p-4 rounded-md mb-4">
@@ -271,14 +278,14 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
                 <span className="font-bold text-gray-900 whitespace-nowrap">{formatCurrency(group.contribution_amount)}</span>
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Note (Optional)</label>
-              <input 
+              <input
                 name="note"
                 type="text"
                 placeholder="e.g. Cash, Bank Transfer..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-3 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               />
             </div>
 
@@ -294,7 +301,6 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
         </Modal>
       )}
 
-      {/* Complete Cycle Confirmation Modal */}
       <Modal
         isOpen={confirmCompleteOpen}
         onClose={() => setConfirmCompleteOpen(false)}

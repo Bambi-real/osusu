@@ -1,21 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
 const { authenticateToken } = require('../middleware/auth');
+const { authLimiter } = require('../middleware/rateLimiter');
 const authController = require('../controllers/auth.controller');
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: {
-    success: false,
-    error: {
-      message: 'Too many attempts. Please wait 15 minutes and try again.'
-    }
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 router.post('/register', authLimiter, authController.register);
 router.post('/login', authLimiter, authController.login);

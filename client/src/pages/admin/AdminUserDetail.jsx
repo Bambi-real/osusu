@@ -16,7 +16,7 @@ export default function AdminUserDetail() {
     let cancelled = false;
     adminApi.getUser(id)
       .then(res => { if (!cancelled) setData(res.data.data); })
-      .catch(() => { if (!cancelled) setError('User not found.'); })
+      .catch((err) => { if (!cancelled) { setError(err?.response?.data?.error?.message || 'User not found.'); if (import.meta.env.DEV) console.warn('[AdminUserDetail] error:', err?.message); } })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [id]);
@@ -50,8 +50,8 @@ export default function AdminUserDetail() {
         <Link to="/admin/users" className="text-xs text-gray-400 hover:text-green-600 transition-colors">← Back to Users</Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <div className="flex items-center gap-4 mb-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-lg font-bold text-green-700">
             {profile.full_name?.charAt(0).toUpperCase()}
           </div>
@@ -91,7 +91,8 @@ export default function AdminUserDetail() {
           <div className="px-4 py-3 border-b border-gray-200">
             <h2 className="font-semibold text-gray-900">Group Memberships</h2>
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Group</th>
@@ -115,6 +116,7 @@ export default function AdminUserDetail() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

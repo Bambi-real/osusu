@@ -14,7 +14,7 @@ export default function AdminDashboard() {
     let cancelled = false;
     adminApi.getStats()
       .then(res => { if (!cancelled) setStats(res.data.data); })
-      .catch(() => { if (!cancelled) setError('Failed to load stats.'); })
+      .catch((err) => { if (!cancelled) { setError(err?.response?.data?.error?.message || 'Failed to load stats.'); if (import.meta.env.DEV) console.warn('[AdminDashboard] error:', err?.message); } })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, []);
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
         <p className="text-sm text-gray-400 mt-1">Live statistics across all Osusu groups and members.</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8">
         {statCards.map(({ label, value, sub, link, large }) => {
           const card = (
             <div className={`

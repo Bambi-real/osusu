@@ -6,8 +6,8 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 w-full mt-auto py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
-          <div className="flex flex-col items-center md:items-start gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:text-left">
+          <div className="flex flex-col items-center sm:items-start gap-2">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center text-white">
                 <svg viewBox="0 0 40 40" fill="none" className="w-5 h-5">
@@ -23,12 +23,12 @@ export default function Footer() {
             </div>
             <p className="text-gray-400 text-sm">Saving together, the smart way.</p>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
+          <div className="flex flex-col items-center sm:items-start gap-3 text-sm">
             <Link to="/dashboard" className="text-gray-400 hover:text-green-400 transition-colors font-medium">Dashboard</Link>
             <Link to="/groups/new" className="text-gray-400 hover:text-green-400 transition-colors font-medium">Create Group</Link>
             <Link to="/contributions" className="text-gray-400 hover:text-green-400 transition-colors font-medium">My History</Link>
           </div>
-          <div className="flex flex-col items-center md:items-end gap-1">
+          <div className="flex flex-col items-center sm:items-end gap-1">
             <p className="text-sm text-gray-400">Built for The Gambia 🇬🇲</p>
             <p className="text-xs text-gray-500">© {year} Osusu</p>
           </div>

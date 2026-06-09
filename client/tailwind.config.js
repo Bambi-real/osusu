@@ -5,6 +5,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      'xs': '480px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -31,12 +39,22 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        slideUpFull: {
+          from: { transform: 'translateY(100%)' },
+          to:   { transform: 'translateY(0)' },
+        },
+        slideInRight: {
+          from: { transform: 'translateX(100%)' },
+          to:   { transform: 'translateX(0)' },
+        },
       },
       animation: {
         shimmer:  'shimmer 1.5s infinite',
         'fade-in': 'fadeIn 0.2s ease-out',
         'modal-in': 'modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-up-full': 'slideUpFull 0.25s ease-out',
+        'slide-in-right': 'slideInRight 0.2s ease-out',
       },
     },
   },

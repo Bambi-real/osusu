@@ -215,7 +215,7 @@ export default function ResetPasswordPage() {
                   placeholder="At least 8 characters"
                   autoFocus
                   autoComplete="new-password"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 pr-10 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors min-h-[44px]"
                 />
                 <button
                   type="button"
@@ -256,7 +256,7 @@ export default function ResetPasswordPage() {
                   placeholder="Repeat your new password"
                   autoComplete="new-password"
                   className={`
-                    w-full border rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 transition-colors
+                    w-full border rounded-lg px-3 py-3 pr-10 text-base sm:text-sm focus:outline-none focus:ring-2 transition-colors min-h-[44px]
                     ${confirm.length > 0
                       ? password === confirm
                         ? 'border-green-400 focus:ring-green-500'
@@ -284,7 +284,7 @@ export default function ResetPasswordPage() {
             <button
               type="submit"
               disabled={loading || !password || !confirm || password !== confirm || password.length < 8}
-              className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-150 flex items-center justify-center gap-2">
+              className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 min-h-[48px]">
               {loading && (
                 <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>

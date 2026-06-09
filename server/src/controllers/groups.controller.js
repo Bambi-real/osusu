@@ -1,6 +1,7 @@
 const { supabaseAdmin } = require('../lib/supabase');
 const { generatePayoutSchedule } = require('../utils/generatePayoutSchedule');
 const { shuffle } = require('../utils/shuffle');
+const logger = require('../lib/logger');
 
 exports.createGroup = async (req, res, next) => {
   try {
@@ -36,7 +37,9 @@ exports.createGroup = async (req, res, next) => {
       .eq('id', req.user.id);
 
     if (roleError) {
-      console.error('[INFO] Failed to update profile role to ORGANISER:', roleError);
+      logger.error('Failed to update profile role to ORGANISER after group creation', {
+        userId: req.user.id, groupId: group.id, error: roleError.message,
+      });
     }
 
     // Insert into group_members
@@ -270,7 +273,7 @@ exports.deleteGroup = async (req, res, next) => {
       .eq('id', id);
 
     if (error) {
-      console.error('Delete group error:', error);
+      logger.error('Delete group error', { groupId: id, error: error.message });
       return res.status(500).json({
         success: false,
         error: { message: 'Failed to delete group. Please try again.' },
@@ -320,7 +323,7 @@ exports.cancelGroup = async (req, res, next) => {
       .single();
 
     if (error) {
-      console.error('Cancel group error:', error);
+      logger.error('Cancel group error', { groupId: id, error: error.message });
       return res.status(500).json({
         success: false,
         error: { message: 'Failed to cancel group. Please try again.' },
@@ -461,9 +464,9 @@ exports.getGroupSchedule = async (req, res, next) => {
         .eq('group_id', id)
         .order('cycle_number', { ascending: true });
         
-       if (error) {
-           console.error('Schedule Fetch Error:', error);
-           return res.status(500).json({ success: false, error: { message: 'Failed to get schedule' } });
+        if (error) {
+            logger.error('Schedule fetch error', { groupId: id, error: error.message });
+            return res.status(500).json({ success: false, error: { message: 'Failed to get schedule' } });
        }
        
        // map to payoutUser 

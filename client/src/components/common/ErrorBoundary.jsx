@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import * as Sentry from '@sentry/react';
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -11,7 +12,10 @@ export default class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, info) {
-    console.error('[ErrorBoundary]', error, info);
+    if (import.meta.env.DEV) {
+      console.error('[ErrorBoundary]', error, info);
+    }
+    Sentry.captureException(error, { extra: { componentStack: info?.componentStack } });
   }
 
   render() {
@@ -36,7 +40,7 @@ export default class ErrorBoundary extends Component {
               onClick={() => this.setState({ hasError: false, error: null })}
               className="bg-green-600 hover:bg-green-700
                          text-white font-semibold px-6 py-3
-                         rounded-xl transition-all">
+                         rounded-xl transition-all min-h-[44px]">
               Try Again
             </button>
           </div>

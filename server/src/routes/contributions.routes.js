@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
+const { apiLimiter } = require('../middleware/rateLimiter');
 const contributionsController = require('../controllers/contributions.controller');
 
 router.use(authenticateToken);
+router.use(apiLimiter);
 
 // Custom check for POST because we need body.groupId to check organiser
 // The requireOrganiser middleware looks at req.body.groupId

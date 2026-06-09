@@ -34,8 +34,9 @@ export default function DashboardPage() {
       setGroups(groupsRes.data.data);
       setContributions(contribsRes.data.data || []);
       setError(null);
-    } catch {
-      setError('Failed to load data.');
+    } catch (err) {
+      setError(err?.response?.data?.error?.message || 'Failed to load data.');
+      if (import.meta.env.DEV) console.warn('[Dashboard] loadData error:', err?.message);
     } finally {
       setLoading(false);
     }
@@ -144,20 +145,34 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-              <Button
-                variant="secondary"
+            <div className="flex flex-col xs:flex-row gap-2 mt-4 sm:mt-0
+                            w-full sm:w-auto">
+              <button
                 onClick={() => setIsJoinModalOpen(true)}
-                className="!bg-white/10 !border-white/30 !text-white hover:!bg-white/20 w-full sm:w-auto"
+                className="
+                  flex items-center justify-center gap-2
+                  border-2 border-white/40 text-white font-semibold
+                  px-5 py-2.5 rounded-full text-sm
+                  hover:bg-white/10 transition-all
+                  w-full xs:w-auto min-h-[44px]
+                "
               >
                 Join
-              </Button>
+              </button>
               <button
                 onClick={() => navigate('/groups/new')}
-                className="inline-flex items-center gap-2 bg-white text-green-700 font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-green-50 active:bg-green-100 transition-all duration-150 shadow-sm border border-white/20"
+                className="
+                  flex items-center justify-center gap-2
+                  bg-white text-green-700 font-semibold
+                  px-5 py-2.5 rounded-full text-sm
+                  hover:bg-green-50 transition-all
+                  w-full xs:w-auto min-h-[44px]
+                "
               >
-                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                <svg className="w-4 h-4" fill="none"
+                     stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                        strokeWidth={2.5} d="M12 4v16m8-8H4" />
                 </svg>
                 New Group
               </button>
@@ -173,7 +188,7 @@ export default function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">{activeGroups.length}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900 whitespace-nowrap truncate">{activeGroups.length}</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Total Groups</p>
             <p className="text-xs text-gray-400 mt-0.5">{groups.length} total</p>
           </div>
@@ -184,7 +199,7 @@ export default function DashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-gray-900">{statsActiveGroups.length}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-gray-900 whitespace-nowrap truncate">{statsActiveGroups.length}</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mt-0.5">Active Groups</p>
             <p className="text-xs text-gray-400 mt-0.5">{statsActiveGroups.length > 0 ? `${statsActiveGroups.length} collecting` : 'None active'}</p>
           </div>
@@ -256,7 +271,7 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div className={`grid gap-5 items-stretch ${activeGroups.length === 1 ? 'grid-cols-1 max-w-sm' : activeGroups.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {activeGroups.map(group => (
                 <GroupCard
                   key={group.id}

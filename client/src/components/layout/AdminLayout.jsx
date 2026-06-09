@@ -22,7 +22,7 @@ export default function AdminLayout({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-shrink-0">
               <Link to="/admin" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <div className="w-7 h-7 bg-green-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-black text-sm">O</span>
@@ -34,13 +34,13 @@ export default function AdminLayout({ children }) {
               </span>
             </div>
 
-            <nav className="flex items-center gap-1">
+            <nav className="flex items-center gap-1 overflow-x-auto scrollbar-hide mx-3 flex-1">
               {adminNavLinks.map(({ to, label, exact }) => (
                 <Link
                   key={to}
                   to={to}
                   className={`
-                    px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+                    flex-shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
                     ${isActive(to, exact)
                       ? 'bg-white/10 text-white'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -52,16 +52,16 @@ export default function AdminLayout({ children }) {
               ))}
             </nav>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-shrink-0">
               <Link
                 to="/dashboard"
                 className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Exit Admin
+                <span className="hidden sm:inline">Exit</span>
               </Link>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 hidden sm:inline">
                 {user?.fullName?.split(' ')[0]}
               </span>
             </div>

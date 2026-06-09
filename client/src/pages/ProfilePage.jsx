@@ -147,7 +147,7 @@ export default function ProfilePage() {
                       required
                       placeholder="3XXXXXX"
                       autoComplete="tel"
-                      className="flex-1 block w-full px-3 py-2.5 text-sm border-none focus:ring-0 text-gray-900"
+                      className="flex-1 block w-full px-3 py-3 text-base sm:text-sm border-none focus:ring-0 text-gray-900 min-h-[44px]"
                     />
                   </div>
                 </div>
@@ -158,14 +158,14 @@ export default function ProfilePage() {
                   </div>
                 )}
 
-                <div className="pt-4 flex justify-end">
+                <div className="pt-4">
                   <Button
                     type="submit"
                     variant="primary"
                     loading={profileLoading}
                     disabled={!isDirty || profileLoading}
                     title={!isDirty ? 'No changes to save' : ''}
-                    className="disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {saveState === 'success' ? '✓ Saved' : 'Save Changes'}
                   </Button>
@@ -199,7 +199,7 @@ export default function ProfilePage() {
               )}
 
               <div className="pt-2">
-                <Button type="submit" variant="primary" loading={passwordLoading}>
+                <Button type="submit" variant="primary" loading={passwordLoading} className="w-full sm:w-auto">
                   Update Password
                 </Button>
               </div>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import { supabase } from '../lib/supabase';
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -10,6 +11,25 @@ if (!apiUrl) {
 }
 
 const api = axios.create({ baseURL: apiUrl, timeout: 15000 });
+
+// Automatic retry with exponential backoff for transient failures
+axiosRetry(api, {
+  retries: 2,
+  retryDelay: axiosRetry.exponentialDelay,
+  retryCondition: (error) => {
+    return (
+      axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+      error.code === 'ECONNABORTED' ||
+      error.response?.status === 429 ||
+      error.response?.status >= 500
+    );
+  },
+  onRetry: (retryCount, error, requestConfig) => {
+    if (import.meta.env.DEV) {
+      console.warn(`[API] Retry ${retryCount}/2 for ${requestConfig.url}:`, error.message);
+    }
+  },
+});
 
 api.interceptors.request.use(
   async (config) => {
@@ -45,7 +65,7 @@ api.interceptors.response.use(
 
     if (!error.response) {
       const isBrowserOffline = typeof navigator !== 'undefined' && !navigator.onLine;
-      error.message = isBrowserOffline
+      error.userMessage = isBrowserOffline
         ? 'You appear to be offline. Please check your internet connection.'
         : 'Request timed out or network error. Please try again.';
     }
@@ -63,5 +83,19 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Helper to create a request with a custom timeout
+api.withTimeout = (timeoutMs) => {
+  const instance = axios.create({
+    baseURL: apiUrl,
+    timeout: timeoutMs,
+  });
+  instance.interceptors.request.use(api.interceptors.request.handlers[0].fulfilled);
+  instance.interceptors.response.use(
+    api.interceptors.response.handlers[0].fulfilled,
+    api.interceptors.response.handlers[0].rejected
+  );
+  return instance;
+};
 
 export default api;
