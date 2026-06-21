@@ -7,6 +7,7 @@ import Button from '../common/Button';
 import Modal from '../common/Modal';
 import EmptyState from "../common/EmptyState";
 import Spinner from "../common/Spinner";
+import { useAuth } from '../../context/AuthContext';
 
 function CircularProgress({ value, max }) {
   const percentage = max > 0 ? (value / max) * 100 : 0;
@@ -37,6 +38,7 @@ function CircularProgress({ value, max }) {
 }
 
 export default function ContributionsTab({ groupId, group, members, isOrganiser }) {
+  const { user } = useAuth();
   const [cycles, setCycles] = useState([]);
   const [selectedCycleId, setSelectedCycleId] = useState('');
   const [cycleData, setCycleData] = useState(null);
@@ -66,7 +68,11 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
   useEffect(() => {
     fetchCycles();
   }, [fetchCycles]);
-
+useEffect(() => {
+  if (selectedCycleId) {
+    fetchCycleDetail(selectedCycleId);
+  }
+}, [selectedCycleId]);
   const fetchCycleDetail = async (cycleId) => {
     try {
       const res = await api.get(`/cycles/${cycleId}`);
@@ -128,6 +134,21 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
       alert(err.response?.data?.error?.message || 'Failed to delete contribution');
     }
   };
+  const handlePayNow = async (memberId) => {
+  setActionLoading(true);
+  try {
+    const res = await api.post('/contributions/pay-via-modempay', {
+      groupId,
+      cycleId: selectedCycleId,
+      userId: memberId,
+      amount: group.contribution_amount
+    });
+    window.location.href = res.data.payment_link;
+  } catch (err) {
+    toast.error(err.response?.data?.error?.message || 'Failed to start payment');
+    setActionLoading(false);
+  }
+};
 
   if (loading) return <Spinner />;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
@@ -247,7 +268,17 @@ export default function ContributionsTab({ groupId, group, members, isOrganiser 
                     </div>
                   )}
                   {!isOrganiser && hasPaid && <Badge status="PAID" />}
-                  {!isOrganiser && !hasPaid && <Badge status="UNPAID" />}
+{!isOrganiser && !hasPaid && member.user.id === user?.id && (
+  <Button
+    variant="primary"
+    size="sm"
+    onClick={() => handlePayNow(member.user.id)}
+    loading={actionLoading}
+  >
+    Pay Now
+  </Button>
+)}
+{!isOrganiser && !hasPaid && member.user.id !== user?.id && <Badge status="UNPAID" />}
                 </div>
               );
             })}

@@ -1,4 +1,6 @@
 const { supabaseAdmin } = require('../lib/supabase');
+const ModemPay = require("modem-pay");
+const modempay = new ModemPay(process.env.MODEMPAY_API_KEY);
 
 exports.createContribution = async (req, res, next) => {
   try {
@@ -192,6 +194,27 @@ exports.deleteContribution = async (req, res, next) => {
     }
 
     res.status(200).json({ success: true, data: { message: 'Contribution deleted' } });
+  } catch (error) {
+    next(error);
+  }
+};
+exports.payContributionViaModemPay = async (req, res, next) => {
+  try {
+    const { groupId, cycleId, userId, amount } = req.body;
+
+    if (!groupId || !cycleId || !userId || !amount) {
+      return res.status(400).json({ success: false, error: { message: 'Missing required fields' } });
+    }
+
+    const intent = await modempay.paymentIntents.create({
+      amount: Number(amount),
+      currency: "GMD",
+      title: "Osusu Contribution",
+      return_url: `${process.env.CLIENT_URL}/groups/${groupId}?paid=true`,
+      cancel_url: `${process.env.CLIENT_URL}/groups/${groupId}?cancelled=true`
+    });
+
+    res.status(200).json({ success: true, payment_link: intent.data.payment_link });
   } catch (error) {
     next(error);
   }
