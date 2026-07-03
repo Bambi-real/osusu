@@ -7,6 +7,7 @@ const authRoutes         = require('./routes/auth.routes');
 const groupRoutes        = require('./routes/groups.routes');
 const contributionRoutes = require('./routes/contributions.routes');
 const cycleRoutes        = require('./routes/cycles.routes');
+const webhookRoutes = require('./routes/webhook.routes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/auth',          authRoutes);
 app.use('/api/groups',        groupRoutes);
 app.use('/api/contributions', contributionRoutes);
 app.use('/api/cycles',        cycleRoutes);
+app.use('/api/webhooks', webhookRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
