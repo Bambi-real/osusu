@@ -1,5 +1,5 @@
 const { supabaseAdmin } = require('../lib/supabase');
-const { initiatePayment, buildReference } = require('../services/hexai.service');
+const { initiatePayment, buildReference } = require('../Services/hexai.service');
 exports.createContribution = async (req, res, next) => {
   try {
     const { groupId, cycleId, userId, amount, note } = req.body;
