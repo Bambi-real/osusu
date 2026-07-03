@@ -58,8 +58,8 @@ async function initiatePayment({ amount, reference, successUrl, errorUrl, custom
     currency:         'GMD',
     client_reference: reference,
 customer_name:    'Osusu Member',
-    success_url:      '',
-    error_url:        '',
+   success_url:      withQueryParam(successUrl, 'reference', reference),
+error_url:        withQueryParam(errorUrl, 'reference', reference),
   };
 
   if (customerPhone && /^\+220[0-9]{7}$/.test(customerPhone)) {
