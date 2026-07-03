@@ -15,6 +15,5 @@ router.get('/my', contributionsController.getMyContributions);
 
 // Note: DELETE /:id handles organiser verification internally to avoid middleware param conflicts
 router.delete('/:id', contributionsController.deleteContribution);
-router.post('/pay-via-modempay', contributionsController.payContributionViaModemPay);
-
+router.post('/pay-via-hexai', contributionsController.payContributionViaHexai);
 module.exports = router;

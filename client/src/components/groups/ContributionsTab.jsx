@@ -137,7 +137,7 @@ useEffect(() => {
   const handlePayNow = async (memberId) => {
   setActionLoading(true);
   try {
-    const res = await api.post('/contributions/pay-via-modempay', {
+   const res = await api.post('/contributions/pay-via-hexai', {
       groupId,
       cycleId: selectedCycleId,
       userId: memberId,
