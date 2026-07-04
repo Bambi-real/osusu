@@ -18,7 +18,20 @@ exports.handleHexaiWebhook = async (req, res) => {
     const sig = req.headers['x-hexai-signature'];
     const secret = process.env.HEXAI_WEBHOOK_SECRET;
 
-// Signature verification temporarily disabled for testing
+const sig = req.headers['x-hexai-signature'];
+const secret = process.env.HEXAI_WEBHOOK_SECRET;
+
+if (secret && sig) {
+  const hash = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(req.body))
+    .digest('hex');
+
+  if (sig !== hash) {
+    console.log('Invalid webhook signature — rejected');
+    return res.status(401).json({ message: 'Invalid signature' });
+  }
+}
     
     
 console.log('WEBHOOK PAYLOAD:', JSON.stringify(req.body));
