@@ -251,26 +251,28 @@ useEffect(() => {
                   {isOrganiser && !isCycleComplete && (
                     <div>
                       {!hasPaid ? (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedMember(member.user);
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          Mark Paid
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                          onClick={() => handleDeleteContribution(contribution.id)}
-                        >
-                          Undo
-                        </Button>
-                      )}
+  <Button
+    variant="secondary"
+    size="sm"
+    onClick={() => {
+      setSelectedMember(member.user);
+      setIsModalOpen(true);
+    }}
+  >
+    Mark Paid
+  </Button>
+) : contribution.note === 'Paid via Wave (HexAI)' ? (
+  <span className="text-xs text-emerald-600 font-medium px-2 py-1 bg-emerald-50 rounded-full">Wave ✓</span>
+) : (
+  <Button
+    variant="ghost"
+    size="sm"
+    className="text-red-600 hover:bg-red-50 hover:text-red-700"
+    onClick={() => handleDeleteContribution(contribution.id)}
+  >
+    Undo
+  </Button>
+)}
                     </div>
                   )}
                   {!isOrganiser && hasPaid && <Badge status="PAID" />}
