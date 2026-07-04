@@ -27,16 +27,16 @@ exports.handleHexaiWebhook = async (req, res) => {
         return res.status(401).json({ message: 'Invalid signature' });
       }
     }
-
-    const { event, transaction } = req.body;
 console.log('WEBHOOK PAYLOAD:', JSON.stringify(req.body));
-    // Only handle successful payments
-    if (event !== 'transaction.completed' || transaction?.status !== 'SUCCEEDED') {
-      return res.status(200).json({ received: true });
-    }
 
-    // Parse the reference to get groupId, cycleId, userId
-    const ref = parseReference(transaction.client_reference);
+const { event, data } = req.body;
+
+if (event !== 'payment.success' || data?.status !== 'SUCCEEDED') {
+  return res.status(200).json({ received: true });
+}
+
+const ref = parseReference(data.reference);
+   
     if (!ref) {
       return res.status(200).json({ received: true });
     }
