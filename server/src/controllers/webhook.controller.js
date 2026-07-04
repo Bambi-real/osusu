@@ -1,7 +1,16 @@
 const crypto = require('crypto');
 const { supabaseAdmin } = require('../lib/supabase');
-const { parseReference } = require('../services/hexai.service');
-
+function parseReference(reference) {
+  if (!reference || !reference.startsWith('OSUSU-')) return null;
+  const parts = reference.split('-');
+  if (parts.length < 5) return null;
+  return {
+    groupId:   parts[1],
+    cycleId:   parts[2],
+    userId:    parts[3],
+    timestamp: parseInt(parts[4]),
+  };
+}
 exports.handleHexaiWebhook = async (req, res) => {
   try {
     // Verify webhook signature
