@@ -1,22 +1,23 @@
 const crypto = require('crypto');
 const { supabaseAdmin } = require('../lib/supabase');
+
 function parseReference(reference) {
   if (!reference || !reference.startsWith('OSUSU-')) return null;
-  const parts = reference.split('-');
-  if (parts.length < 5) return null;
-  return {
-    groupId:   parts[1],
-    cycleId:   parts[2],
-    userId:    parts[3],
-    timestamp: parseInt(parts[4]),
-  };
+  const withoutPrefix = reference.slice(6);
+  const groupId   = withoutPrefix.slice(0, 36);
+  const cycleId   = withoutPrefix.slice(37, 73);
+  const userId    = withoutPrefix.slice(74, 110);
+  const timestamp = parseInt(withoutPrefix.slice(111));
+  if (!groupId || !cycleId || !userId) return null;
+  return { groupId, cycleId, userId, timestamp };
 }
+
 exports.handleHexaiWebhook = async (req, res) => {
   try {
     // Verify webhook signature
     const sig = req.headers['x-hexai-signature'];
     const secret = process.env.HEXAI_WEBHOOK_SECRET;
-    
+
 // Signature verification temporarily disabled for testing
     
     
