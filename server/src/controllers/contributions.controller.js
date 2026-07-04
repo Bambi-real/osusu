@@ -206,8 +206,10 @@ exports.payContributionViaHexai = async (req, res, next) => {
 
     const reference = buildReference(groupId, cycleId, userId);
 
-    const payment = await initiatePayment({
-      amount: Number(amount),
+    const feeMultiplier = 1.02; // 2% fee passed to member
+const amountWithFee = (Number(amount) * feeMultiplier).toFixed(2);
+const payment = await initiatePayment({
+  amount: amountWithFee,
       reference,
       successUrl: `${process.env.CLIENT_URL}/groups/${groupId}?paid=true`,
       errorUrl: `${process.env.CLIENT_URL}/groups/${groupId}?cancelled=true`,
