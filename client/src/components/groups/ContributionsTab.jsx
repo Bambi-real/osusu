@@ -135,9 +135,15 @@ useEffect(() => {
     }
   };
   const handlePayNow = async (memberId) => {
+  const fee = (group.contribution_amount * 0.02).toFixed(2);
+  const total = (group.contribution_amount * 1.02).toFixed(2);
+  const confirmed = window.confirm(
+    `Payment Summary:\n\nContribution: GMD ${group.contribution_amount}\nProcessing fee (2%): GMD ${fee}\nTotal charged: GMD ${total}\n\nProceed with payment?`
+  );
+  if (!confirmed) return;
   setActionLoading(true);
   try {
-   const res = await api.post('/contributions/pay-via-hexai', {
+    const res = await api.post('/contributions/pay-via-hexai', {
       groupId,
       cycleId: selectedCycleId,
       userId: memberId,
