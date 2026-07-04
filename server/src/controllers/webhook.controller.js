@@ -29,7 +29,7 @@ exports.handleHexaiWebhook = async (req, res) => {
     }
 
     const { event, transaction } = req.body;
-
+console.log('WEBHOOK PAYLOAD:', JSON.stringify(req.body));
     // Only handle successful payments
     if (event !== 'transaction.completed' || transaction?.status !== 'SUCCEEDED') {
       return res.status(200).json({ received: true });
