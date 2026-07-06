@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const { supabaseAdmin } = require('../lib/supabase');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function parseReference(reference) {
   if (!reference || !reference.startsWith('OSUSU-')) return null;
@@ -74,7 +76,33 @@ exports.handleHexaiWebhook = async (req, res) => {
       cycle_id: cycleId,
       amount_to_add: Number(group.contribution_amount),
     });
+// Send email notification to organiser
+    const { data: group_detail } = await supabaseAdmin
+      .from('groups')
+      .select('name, organiser_id, profiles:organiser_id(full_name, email)')
+      .eq('id', groupId)
+      .single();
 
+    const { data: member_detail } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name')
+      .eq('id', userId)
+      .single();
+
+    if (group_detail?.profiles?.email) {
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: group_detail.profiles.email,
+        subject: `New payment received — ${group_detail.name}`,
+        html: `
+          <h2>Payment Received</h2>
+          <p><strong>${member_detail?.full_name || 'A member'}</strong> has paid their contribution for <strong>${group_detail.name}</strong>.</p>
+          <p>Amount: <strong>GMD ${group.contribution_amount}</strong></p>
+          <p>Payment method: Wave</p>
+          <p>Log in to Osusu to view the full details.</p>
+        `
+      });
+    }
     res.status(200).json({ received: true });
   } catch (error) {
     console.error('Webhook error:', error);
