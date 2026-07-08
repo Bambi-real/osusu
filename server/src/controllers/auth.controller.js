@@ -28,7 +28,7 @@ exports.register = async (req, res, next) => {
       email,
       password,
       user_metadata: { full_name: fullName, phone },
-      email_confirm: true
+      email_confirm: false
     });
 
     if (createError) {
@@ -61,15 +61,11 @@ exports.register = async (req, res, next) => {
        return res.status(500).json({ success: false, error: { message: 'Error fetching profile' } });
     }
 
-    // Sign in to get session
-    const { data: signInData, error: signInError } = await supabaseAnon.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (signInError || !signInData.session) {
-      return res.status(500).json({ success: false, error: { message: 'Error logging in after registration' } });
-    }
+    // Don't sign in — user must verify email first
+return res.status(201).json({
+  success: true,
+  data: { requiresEmailVerification: true }
+});
 
     const safeProfileObject = {
       id: userProfile.id,
