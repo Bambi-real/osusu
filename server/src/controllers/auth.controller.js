@@ -61,7 +61,31 @@ exports.register = async (req, res, next) => {
        return res.status(500).json({ success: false, error: { message: 'Error fetching profile' } });
     }
 
-    // Don't sign in — user must verify email first
+    // Send verification email manually
+await supabaseAdmin.auth.admin.generateLink({
+  type: 'signup',
+  email: email,
+  options: {
+    redirectTo: `${process.env.CLIENT_URL}/login?verified=true`
+  }
+}).then(async ({ data }) => {
+  if (data?.properties?.action_link) {
+    const { Resend } = require('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    await resend.emails.send({
+      from: 'noreply@osusu.tech',
+      to: email,
+      subject: 'Verify your Osusu account',
+      html: `
+        <h2>Welcome to Osusu!</h2>
+        <p>Hi ${fullName}, click the link below to verify your email address:</p>
+        <a href="${data.properties.action_link}" style="background:#16a34a;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin:16px 0;">Verify Email</a>
+        <p>If you didn't create an account, ignore this email.</p>
+      `
+    });
+  }
+});
+
 return res.status(201).json({
   success: true,
   data: { requiresEmailVerification: true }

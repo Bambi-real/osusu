@@ -91,7 +91,7 @@ exports.handleHexaiWebhook = async (req, res) => {
 
     if (group_detail?.profiles?.email) {
       await resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: 'noreply@osusu.tech',
         to: group_detail.profiles.email,
         subject: `New payment received — ${group_detail.name}`,
         html: `
