@@ -57,11 +57,15 @@ export default function RegisterPage() {
         phone: fullPhone,
         password,
       });
-      const { access_token, refresh_token, user } = res.data.data;
-
-      await supabase.auth.setSession({ access_token, refresh_token });
-      setLoggedInUser(user);
-      navigate('/dashboard');
+      console.log('Registration response:', res.data);
+      if (res.data.data.requiresEmailVerification) {
+  navigate('/verify-email?email=' + encodeURIComponent(email));
+  return;
+}
+const { access_token, refresh_token, user } = res.data.data;
+await supabase.auth.setSession({ access_token, refresh_token });
+setLoggedInUser(user);
+navigate('/dashboard');
     } catch (err) {
       const msg = err.response?.data?.error?.message || 'Registration failed. Please try again.';
       setError(msg);

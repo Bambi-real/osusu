@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 
 import LandingPage         from './pages/LandingPage';
 import LoginPage           from './pages/LoginPage';
@@ -46,6 +47,7 @@ export default function App() {
         <Routes>
           <Route path="/"               element={<HomeRoute />} />
           <Route path="/login"          element={<PublicRoute><LoginPage /></PublicRoute>} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/register"       element={<PublicRoute><RegisterPage /></PublicRoute>} />
           <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
           <Route path="/reset-password"  element={<ResetPasswordPage />} />
