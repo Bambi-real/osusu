@@ -156,9 +156,9 @@ export default function Navbar() {
       <div className={`fixed inset-0 z-40 transition-opacity duration-300 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
         <div className={`absolute top-0 right-0 w-72 h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="flex flex-col h-full">
-            {/* User profile section */}
-            {user && (
+  <div className="flex flex-col h-full pt-20">
+    {/* User profile section */}
+    {user && (
   <div className="p-5 border-b border-slate-100">
     <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3">
       <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
