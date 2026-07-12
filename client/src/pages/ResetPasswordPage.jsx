@@ -10,49 +10,21 @@ export default function ResetPasswordPage() {
   const [loading, setLoading]           = useState(false);
   const [success, setSuccess]           = useState(false);
   const [error, setError]               = useState('');
-  const [tokenState, setTokenState]     = useState('checking');
-  const [accessToken, setAccessToken]   = useState('');
+  const [tokenState, setTokenState] = useState('checking');
+const [resetToken, setResetToken] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Set New Password — Osusu';
-    let cancelled = false;
-
-    // Listen for the PASSWORD_RECOVERY event that Supabase fires
-    // when it detects and processes the recovery hash in the URL
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (cancelled) return;
-      if (event === 'PASSWORD_RECOVERY' && session?.access_token) {
-        setAccessToken(session.access_token);
-        setTokenState('valid');
-        window.history.replaceState({}, '', '/reset-password');
-      }
-    });
-
-    // Also check if Supabase already processed the hash and set the session
-    // (the event may have fired before this component mounted)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled) return;
-      if (session?.access_token) {
-        setAccessToken(session.access_token);
-        setTokenState('valid');
-        window.history.replaceState({}, '', '/reset-password');
-      }
-    });
-
-    // Timeout: if nothing matched after 5s, show invalid state
-    const timer = setTimeout(() => {
-      if (cancelled) return;
-      setTokenState(current => current === 'checking' ? 'invalid' : current);
-    }, 5000);
-
-    return () => {
-      cancelled = true;
-      subscription.unsubscribe();
-      clearTimeout(timer);
-    };
-  }, []);
-
+  document.title = 'Set New Password — Osusu';
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token) {
+    setResetToken(token);
+    setTokenState('valid');
+  } else {
+    setTokenState('invalid');
+  }
+}, []);
   const getStrength = (pwd) => {
     let s = 0;
     if (pwd.length >= 8)            s++;
@@ -86,9 +58,9 @@ export default function ResetPasswordPage() {
     setError('');
     try {
       await api.post('/auth/reset-password', {
-        newPassword: password,
-        accessToken,
-      });
+  newPassword: password,
+  token: resetToken,
+});
       setSuccess(true);
     } catch (err) {
       setError(
@@ -100,7 +72,7 @@ export default function ResetPasswordPage() {
     }
   };
 
-  if (tokenState === 'checking') {
+  if (tokenState === 'awachecking') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

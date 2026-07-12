@@ -270,10 +270,46 @@ exports.forgotPassword = async (req, res, next) => {
       });
     }
 
-    await supabaseAdmin.auth.resetPasswordForEmail(
-      email.trim().toLowerCase(),
-      { redirectTo: `${process.env.CLIENT_URL}/reset-password` }
-    );
+    // Check if user exists
+    const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+    const user = users?.users?.find(u => u.email === email.trim().toLowerCase());
+
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        data: null,
+        message: 'If that email is registered, a reset link has been sent.',
+      });
+    }
+
+    // Generate reset token
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    // Store token in database
+    await supabaseAdmin.from('password_reset_tokens').insert({
+      user_id: user.id,
+      token,
+      expires_at: expiresAt.toISOString(),
+    });
+
+    // Send reset email via Resend
+    const { Resend } = require('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+    await resend.emails.send({
+      from: 'noreply@osusu.tech',
+      to: email.trim().toLowerCase(),
+      subject: 'Reset your Osusu password',
+      html: `
+        <h2>Reset your password</h2>
+        <p>Click the link below to reset your Osusu password. This link expires in 1 hour.</p>
+        <a href="${resetLink}" style="background:#16a34a;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin:16px 0;">Reset Password</a>
+        <p>If you didn't request this, ignore this email.</p>
+      `
+    });
 
     return res.status(200).json({
       success: true,
@@ -290,39 +326,73 @@ exports.forgotPassword = async (req, res, next) => {
     });
   }
 };
-
 exports.resetPassword = async (req, res, next) => {
   try {
-    const { newPassword, accessToken } = req.body;
+    const { newPassword, token } = req.body;
 
-    if (!newPassword || !accessToken) {
+    if (!newPassword || !token) {
       return res.status(400).json({
         success: false,
-        error: {
-          message: 'New password and reset token are required.'
-        }
+        error: { message: 'New password and reset token are required.' }
       });
     }
 
     if (newPassword.length < 8) {
       return res.status(400).json({
         success: false,
-        error: {
-          message: 'Password must be at least 8 characters long.'
-        }
+        error: { message: 'Password must be at least 8 characters long.' }
       });
     }
 
-    const { data: { user }, error: getUserError } = await supabaseAdmin.auth.getUser(accessToken);
+    // Look up token
+    const { data: resetToken, error: tokenError } = await supabaseAdmin
+      .from('password_reset_tokens')
+      .select('*')
+      .eq('token', token)
+      .single();
 
-    if (getUserError || !user) {
+    if (tokenError || !resetToken) {
       return res.status(401).json({
         success: false,
-        error: {
-          message: 'This reset link is invalid or has expired. Please request a new one.'
-        }
+        error: { message: 'This reset link is invalid or has expired.' }
       });
     }
+
+    // Check expiry
+    if (new Date(resetToken.expires_at) < new Date()) {
+      await supabaseAdmin.from('password_reset_tokens').delete().eq('token', token);
+      return res.status(401).json({
+        success: false,
+        error: { message: 'This reset link has expired. Please request a new one.' }
+      });
+    }
+
+    // Update password
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      resetToken.user_id,
+      { password: newPassword }
+    );
+
+    if (updateError) {
+      return res.status(500).json({
+        success: false,
+        error: { message: 'Failed to update password. Please try again.' }
+      });
+    }
+
+    // Delete token after use
+    await supabaseAdmin.from('password_reset_tokens').delete().eq('token', token);
+
+    return res.status(200).json({
+      success: true,
+      data: null,
+      message: 'Password updated successfully.',
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
 
     const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       user.id,
