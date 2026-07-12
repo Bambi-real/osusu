@@ -159,18 +159,22 @@ export default function Navbar() {
           <div className="flex flex-col h-full">
             {/* User profile section */}
             {user && (
-              <div className="p-5 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
-                    {user.fullName ? user.fullName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-semibold text-gray-900 truncate">{user.fullName || 'User'}</div>
-                    <div className="text-xs text-gray-500 truncate">{user.email}</div>
-                  </div>
-                </div>
-              </div>
-            )}
+  <div className="p-5 border-b border-slate-100">
+    <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3">
+      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
+        {user.fullName ? user.fullName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+      </div>
+      <div className="min-w-0">
+        <div className="font-semibold text-gray-900 truncate">{user.fullName || 'User'}</div>
+        <div className="text-xs text-gray-500 truncate">{user.email}</div>
+      </div>
+      <svg className="w-4 h-4 text-gray-400 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
+    </Link>
+  </div>
+)}
+                
 
             {/* Nav links */}
             <div className="flex-1 p-4 space-y-1">
