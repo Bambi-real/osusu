@@ -194,17 +194,18 @@ exports.getMe = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
     try {
-        const { fullName, phone } = req.body;
-        
-        const updateData = {};
-        if (fullName) updateData.full_name = fullName;
-        if (phone) updateData.phone = phone;
+        const { fullName, phone, waveNumber } = req.body;
+
+const updateData = {};
+if (fullName) updateData.full_name = fullName;
+if (phone) updateData.phone = phone;
+if (waveNumber !== undefined) updateData.wave_number = waveNumber;
         
         const { data: userProfile, error: updateError } = await supabaseAdmin
           .from('profiles')
           .update(updateData)
           .eq('id', req.user.id)
-          .select('id, full_name, phone, role, created_at')
+          .select('id, full_name, phone, role, wave_number, created_at')
           .single();
           
         if (updateError) {
@@ -215,13 +216,14 @@ exports.updateProfile = async (req, res, next) => {
         }
         
         const safeProfileObject = {
-          id: userProfile.id,
-          email: req.user.email,
-          fullName: userProfile.full_name,
-          phone: userProfile.phone,
-          role: userProfile.role,
-          createdAt: userProfile.created_at
-        };
+           id: userProfile.id,
+           email: req.user.email,
+           fullName: userProfile.full_name,
+           phone: userProfile.phone,
+            role: userProfile.role,
+            waveNumber: userProfile.wave_number,
+           createdAt: userProfile.created_at
+   };
         
         res.status(200).json({ success: true, data: safeProfileObject });
     } catch(error) {

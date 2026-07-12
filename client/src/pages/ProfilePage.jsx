@@ -10,8 +10,9 @@ import Button from '../components/common/Button';
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
 
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
+ const [fullName, setFullName] = useState('');
+const [phone, setPhone] = useState('');
+const [waveNumber, setWaveNumber] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileMsg, setProfileMsg] = useState(null);
   const [saveState, setSaveState] = useState('idle');
@@ -25,12 +26,13 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      setFullName(user.fullName || '');
-      setPhone(user.phone ? user.phone.replace(/^\+220/, '') : '');
-    }
+  setFullName(user.fullName || '');
+  setPhone(user.phone ? user.phone.replace(/^\+220/, '') : '');
+  setWaveNumber(user.waveNumber ? user.waveNumber.replace(/^\+220/, '') : '');
+}
   }, [user]);
 
-  const isDirty = fullName !== (user?.fullName || '') || phone !== (user?.phone || '').replace(/^\+220/, '');
+  const isDirty = fullName !== (user?.fullName || '') || phone !== (user?.phone || '').replace(/^\+220/, '') || waveNumber !== (user?.waveNumber || '').replace(/^\+220/, '');
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
@@ -43,9 +45,10 @@ export default function ProfilePage() {
       }
 
       await api.put('/auth/profile', {
-        fullName,
-        phone: phoneValue,
-      });
+  fullName,
+  phone: phoneValue,
+  waveNumber: waveNumber ? '+220' + waveNumber.replace(/^\+220/, '') : null,
+});
       await refreshUser();
       setSaveState('success');
       setTimeout(() => setSaveState('idle'), 2000);
@@ -149,7 +152,26 @@ export default function ProfilePage() {
                     />
                   </div>
                 </div>
-
+<div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Wave Number (for payouts)</label>
+                  <div className="flex rounded-lg border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500 transition-colors">
+                    <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm font-medium border-r border-gray-300">
+                      +220
+                    </span>
+                    <input
+                      type="tel"
+                      name="waveNumber"
+                      value={waveNumber}
+                      onChange={(e) => {
+                        setWaveNumber(e.target.value);
+                        if (profileMsg) setProfileMsg(null);
+                      }}
+                      placeholder="3XXXXXX"
+                      className="flex-1 block w-full px-3 py-2.5 text-sm border-none focus:ring-0 text-gray-900"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">Required to receive automatic payouts when you win a cycle.</p>
+                </div>
                 {profileMsg && (
                   <div className={`text-sm font-medium p-3 rounded-lg border ${profileMsg.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
                     {profileMsg.text}
