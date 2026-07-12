@@ -107,6 +107,54 @@ exports.completeCycle = async (req, res, next) => {
       return res.status(403).json({ success: false, error: { message: 'Only organiser can mark cycle complete' } });
     }
 
+    // Get recipient's Wave number
+    const { data: recipient } = await supabaseAdmin
+      .from('profiles')
+      .select('wave_number, full_name')
+      .eq('id', cycle.payout_user_id)
+      .single();
+
+    if (!recipient?.wave_number) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Recipient has not added their Wave number yet. Ask them to update their profile first.' }
+      });
+    }
+
+    // Calculate payout amount (total collected minus 1% platform fee)
+    const totalCollected = Number(cycle.total_collected);
+    const platformFee = totalCollected * 0.01;
+    const payoutAmount = (totalCollected - platformFee).toFixed(2);
+
+    // Send payout via HexAI
+    const fetch = require('node-fetch');
+    const payoutResponse = await fetch(`${process.env.HEXAI_API_BASE_URL}/payouts/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.HEXAI_API_KEY}`,
+        'x-hexai-key': process.env.HEXAI_API_KEY,
+      },
+      body: JSON.stringify({
+        amount: payoutAmount,
+        currency: 'GMD',
+        recipient_mobile: recipient.wave_number,
+        recipient_name: recipient.full_name,
+        client_reference: `PAYOUT-${id}-${Date.now()}`,
+        reason: 'Osusu cycle payout'
+      })
+    });
+
+    const payoutData = await payoutResponse.json();
+    console.log('PAYOUT RESPONSE:', JSON.stringify(payoutData));
+
+    if (!payoutResponse.ok || payoutData.status !== 'success') {
+      return res.status(500).json({
+        success: false,
+        error: { message: 'Failed to send payout. Please try again.' }
+      });
+    }
+
     const { data: updatedCycle, error: updateError } = await supabaseAdmin
       .from('cycles')
       .update({ status: 'PAID_OUT' })
