@@ -276,7 +276,7 @@ useEffect(() => {
                     </div>
                   )}
                   {!isOrganiser && hasPaid && <Badge status="PAID" />}
-{!isOrganiser && !hasPaid && member.user.id === user?.id && (
+{!hasPaid && member.user.id === user?.id && (
   <Button
     variant="primary"
     size="sm"

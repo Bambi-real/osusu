@@ -121,11 +121,47 @@ exports.completeCycle = async (req, res, next) => {
       });
     }
 
-    // Calculate payout amount (total collected minus 1% platform fee)
-    const totalCollected = Number(cycle.total_collected);
-    const platformFee = totalCollected * 0.01;
-    const payoutAmount = (totalCollected - platformFee).toFixed(2);
+    // Calculate payout based only on Wave payments (cash payments excluded)
+    const { data: waveContributions } = await supabaseAdmin
+      .from('contributions')
+      .select('amount')
+      .eq('cycle_id', id)
+      .eq('note', 'Paid via Wave (HexAI)');
 
+    const waveTotal = waveContributions?.reduce((sum, c) => sum + Number(c.amount), 0) || 0;
+    const platformFee = waveTotal * 0.01;
+    const payoutAmount = (waveTotal - platformFee).toFixed(2);
+
+    if (Number(payoutAmount) <= 0) {
+      // No Wave payments — skip payout, just complete the cycle
+      const { data: updatedCycle, error: updateError } = await supabaseAdmin
+        .from('cycles')
+        .update({ status: 'PAID_OUT' })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (updateError) {
+        return res.status(500).json({ success: false, error: { message: 'Failed to update cycle' } });
+      }
+
+      const { data: nextCycle } = await supabaseAdmin
+        .from('cycles')
+        .select('id')
+        .eq('group_id', cycle.group_id)
+        .eq('status', 'PENDING')
+        .order('cycle_number', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (nextCycle) {
+        await supabaseAdmin.from('cycles').update({ status: 'COLLECTING' }).eq('id', nextCycle.id);
+      } else {
+        await supabaseAdmin.from('groups').update({ status: 'COMPLETED' }).eq('id', cycle.group_id);
+      }
+
+      return res.status(200).json({ success: true, data: updatedCycle });
+    }
     // Send payout via HexAI
     const fetch = require('node-fetch');
     const payoutResponse = await fetch(`${process.env.HEXAI_API_BASE_URL}/payouts/send`, {
