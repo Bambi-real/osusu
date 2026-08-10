@@ -223,17 +223,17 @@ export default function CreateGroupPage() {
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <Input 
-                      label="Contribution Amount (GMD)" 
-                      name="contributionAmount" 
-                      value={formData.contributionAmount}
-                      onChange={handleChange}
-                      type="number" 
-                      min="50"
-                      step="50"
-                      required 
-                      placeholder="1000"
-                      className="w-full"
-                    />
+  label="Contribution Amount (GMD)" 
+  name="contributionAmount" 
+  value={formData.contributionAmount}
+  onChange={handleChange}
+  type="number" 
+  min="1"
+  step="1"
+  required 
+  placeholder="1000"
+  className="w-full"
+/>
                     
                     <div className="flex flex-col">
                       <label className="text-sm font-medium text-gray-700 mb-1">Frequency *</label>
